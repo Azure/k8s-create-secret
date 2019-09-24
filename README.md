@@ -1,14 +1,14 @@
 # Kubernetes create secret
 Create a [generic secret or docker-registry secret](https://kubernetes.io/docs/concepts/configuration/secret/) in Kubernetes cluster.
 
-The secret will be created in the cluster context which was set earlier in the workflow by using either [`azure/k8s-actions/aks-set-context`](https://github.com/Azure/k8s-actions/tree/master/aks-set-context) or [`azure/k8s-actions/k8s-set-context`](https://github.com/Azure/k8s-actions/tree/master/k8s-set-context)
+The secret will be created in the cluster context which was set earlier in the workflow by using either [`azure/aks-set-context`](https://github.com/Azure/aks-set-context/tree/master) or [`azure/k8s-set-context`](https://github.com/Azure/k8s-set-context/tree/master)
 
-Refer to the action metadata file for details about all the inputs https://github.com/Azure/k8s-actions/blob/master/k8s-create-secret/action.yml
+Refer to the action metadata file for details about all the inputs https://github.com/Azure/k8s-create-secret/blob/master/action.yml
 
 ## For docker-registry secret (imagepullsecret)
 ```yaml
     - name: Set imagePullSecret
-      uses: azure/k8s-actions/k8s-create-secret@master
+      uses: azure/k8s-create-secret@v1
       with:
         namespace: 'myapp'
         container-registry-url: 'containerregistry.contoso.com'
@@ -20,7 +20,7 @@ Refer to the action metadata file for details about all the inputs https://githu
 
 ## For generic secret
 ```yaml
-    - uses: azure/k8s-actions/k8s-create-secret@master
+    - uses: azure/k8s-create-secret@v1
       with:
         namespace: 'default'
         secret-type: 'generic'
@@ -28,7 +28,7 @@ Refer to the action metadata file for details about all the inputs https://githu
         secret-name: azure-storage
 ```
 
-### Prerequisite
+### Prerequisites
 Get the username and password of your container registry and create secrets for them. For Azure Container registry refer to **admin [account document](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-authentication#admin-account)** for username and password.
 
 Now add the username and password as [a secret](https://developer.github.com/actions/managing-workflows/storing-secrets/) in the GitHub repository.
