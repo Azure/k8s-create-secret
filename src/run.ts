@@ -103,7 +103,7 @@ function getGenericSecretArguments(secretName: string): string[] {
     return args;
 }
 
-export function fromLiteralsToFromFile(secretArguments: string): string {
+function fromLiteralsToFromFile(secretArguments: string): string {
     const parsedArgument = secretArguments.split("--").reduce((argumentsBuilder, argument) => {
         if (argument && !argument.startsWith("from-literal=")) argumentsBuilder += " --" + argument;
         if (argument && argument.startsWith("from-literal=")) {
