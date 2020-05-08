@@ -103,12 +103,18 @@ function getGenericSecretArguments(secretName: string): string[] {
     return args;
 }
 
+/**
+ * Takes a valid kubectl arguments and parses --from-literal to --from-file
+ * @param secretArguments 
+ */
 function fromLiteralsToFromFile(secretArguments: string): string {
     const parsedArgument = secretArguments.split("--").reduce((argumentsBuilder, argument) => {
         if (argument && !argument.startsWith("from-literal=")) {
             argumentsBuilder += " --" + argument;
         } else if (argument && argument.startsWith("from-literal=")) {
             const command = argument.substring("from-literal=".length);
+            /* The command starting after 'from-literal=' contanis a 'key=value' format. The secret itself might contain a '=', 
+            Hence the substring than a split*/
             if (command.indexOf("=") == -1) throw new Error('Invalid from-literal input. It should contain a key and value');
             const secretName = command.substring(0, command.indexOf("="));
             const secretValue = command.substring(command.indexOf("=") + 1);
@@ -119,8 +125,14 @@ function fromLiteralsToFromFile(secretArguments: string): string {
     return parsedArgument;
 }
 
-function createFile(filePath: string, data: string, isTempFile : boolean): string {
-    filePath = isTempFile ? path.join(process.env['RUNNER_TEMP'], filePath) : filePath;
+/**
+ * 
+ * @param fileName The fileName in case of a file needs to be created in TEMP folder else the entire filepath
+ * @param data File data
+ * @param isTempFile Boolean to indicate if file needs to be created in TEMP folder
+ */
+function createFile(fileName: string, data: string, isTempFile: boolean): string {
+    const filePath = isTempFile ? path.join(process.env['RUNNER_TEMP'], fileName) : fileName;
     try {
         fs.writeFileSync(filePath, data);
     }
