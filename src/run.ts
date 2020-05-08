@@ -112,11 +112,22 @@ function fromLiteralsToFromFile(secretArguments: string): string {
             if (command.indexOf("=") == -1) throw new Error('Invalid from-literal input. It should contain a key and value');
             const secretName = command.substring(0, command.indexOf("="));
             const secretValue = command.substring(command.indexOf("=") + 1);
-            argumentsBuilder += " --from-file=" + fs.writeFileSync(path.join(process.env['RUNNER_TEMP'], secretName.trim()), secretValue);
+            argumentsBuilder += " --from-file=" + createFile(secretName.trim(), secretValue, true);
         }
         return argumentsBuilder;
     });
     return parsedArgument;
+}
+
+function createFile(filePath: string, data: string, isTempFile : boolean): string {
+    filePath = isTempFile ? path.join(process.env['RUNNER_TEMP'], filePath) : filePath;
+    try {
+        fs.writeFileSync(filePath, data);
+    }
+    catch (err) {
+        throw err;
+    }
+    return filePath;
 }
 
 function checkClusterContext() {
