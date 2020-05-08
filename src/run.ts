@@ -105,39 +105,18 @@ function getGenericSecretArguments(secretName: string): string[] {
 
 function fromLiteralsToFromFile(secretArguments: string): string {
     const parsedArgument = secretArguments.split("--").reduce((argumentsBuilder, argument) => {
-        if (argument && !argument.startsWith("from-literal=")) argumentsBuilder += " --" + argument;
-        if (argument && argument.startsWith("from-literal=")) {
+        if (argument && !argument.startsWith("from-literal=")) {
+            argumentsBuilder += " --" + argument;
+        } else if (argument && argument.startsWith("from-literal=")) {
             const command = argument.substring("from-literal=".length);
             if (command.indexOf("=") == -1) throw new Error('Invalid from-literal input. It should contain a key and value');
             const secretName = command.substring(0, command.indexOf("="));
             const secretValue = command.substring(command.indexOf("=") + 1);
-            argumentsBuilder += " --from-file=" + createFile(path.join(process.env['RUNNER_TEMP'], secretName.trim()), secretValue);
+            argumentsBuilder += " --from-file=" + fs.writeFileSync(path.join(process.env['RUNNER_TEMP'], secretName.trim()), secretValue);
         }
         return argumentsBuilder;
     });
     return parsedArgument;
-}
-
-function createFile(filePath: string, data: string, options?: any): string {
-    try {
-        fs.writeFileSync(filePath, data, options);
-    }
-    catch (err) {
-        deleteFile(filePath);
-        throw err;
-    }
-    return filePath;
-}
-
-function deleteFile(filePath: string) {
-    if (fs.existsSync(filePath)) {
-        try {
-            fs.unlinkSync(filePath);
-        }
-        catch (err) {
-            console.error(err.toString());
-        }
-    }
 }
 
 function checkClusterContext() {
