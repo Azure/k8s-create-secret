@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as io from '@actions/io';
 
-import fs = require("fs");
+import fileUtility = require('./file.utility')
 
 let kubectlPath = "";
 
@@ -118,28 +118,11 @@ function fromLiteralsToFromFile(secretArguments: string): string {
             if (command.indexOf("=") == -1) throw new Error('Invalid from-literal input. It should contain a key and value');
             const secretName = command.substring(0, command.indexOf("="));
             const secretValue = command.substring(command.indexOf("=") + 1);
-            argumentsBuilder += " --from-file=" + createFile(secretName.trim(), secretValue, true);
+            argumentsBuilder += " --from-file=" + fileUtility.createFile(secretName.trim(), secretValue, true);
         }
         return argumentsBuilder;
     });
     return parsedArgument;
-}
-
-/**
- * 
- * @param fileName The fileName in case of a file needs to be created in TEMP folder else the entire filepath
- * @param data File data
- * @param isTempFile Boolean to indicate if file needs to be created in TEMP folder
- */
-function createFile(fileName: string, data: string, isTempFile: boolean): string {
-    const filePath = isTempFile ? path.join(process.env['RUNNER_TEMP'], fileName) : fileName;
-    try {
-        fs.writeFileSync(filePath, data);
-    }
-    catch (err) {
-        throw err;
-    }
-    return filePath;
 }
 
 function checkClusterContext() {
@@ -155,3 +138,5 @@ async function run() {
 }
 
 run().catch(core.setFailed);
+
+module.exports = fromLiteralsToFromFile;

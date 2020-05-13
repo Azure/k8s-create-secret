@@ -4,7 +4,8 @@
     "private": true,
     "main": "lib/run.js",
     "scripts": {
-        "build": "tsc --outDir .\\lib\\ --rootDir .\\src\\"
+        "build": "tsc --outDir .\\lib\\ --rootDir .\\src\\",
+        "test": "jest"
     },
     "keywords": [
         "actions",
@@ -19,6 +20,7 @@
         "@actions/tool-cache": "^1.0.0"
     },
     "devDependencies": {
-        "@types/node": "^12.0.4"
+        "@types/node": "^12.0.4",
+        "jest": "^26.0.1"
     }
 }
