@@ -110,7 +110,7 @@ function getGenericSecretArguments(secretName: string): string[] {
 export function fromLiteralsToFromFile(secretArguments: string): string {
     const parsedArgument = secretArguments.split("--").reduce((argumentsBuilder, argument) => {
         if (argument && !argument.startsWith("from-literal=")) {
-            argumentsBuilder += " --" + argument;
+            argumentsBuilder = argumentsBuilder.trim() + " --" + argument;
         } else if (argument && argument.startsWith("from-literal=")) {
             const command = argument.substring("from-literal=".length);
             /* The command starting after 'from-literal=' contanis a 'key=value' format. The secret itself might contain a '=', 
