@@ -25,7 +25,7 @@ bld/
 [Ll]og/
 
 # dependencies
-/node_modules/@types
+/node_modules
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -330,6 +330,3 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-
-# node modules
-node_modules

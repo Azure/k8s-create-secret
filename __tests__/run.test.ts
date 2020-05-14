@@ -1,22 +1,23 @@
-const fromLiteralsToFromFile = require('../lib/run');
-const fileUtility = require('../lib/file.utility');
+import { fromLiteralsToFromFile } from "../src/run"
+import { createFile } from '../src/file.utility';
+import { mocked } from 'ts-jest/utils'
 
-beforeEach(() => {
-    fileUtility.createFile = jest.fn();
-});
+jest.mock('../src/file.utility');
+
+const fileUtility = mocked(createFile, true)
 
 test('Literal converted to file', () => {
-    fileUtility.createFile.mockReturnValue("./key");
+    fileUtility.mockReturnValue("./key");
     expect(fromLiteralsToFromFile("--from-literal=key=value")).toBe(' --from-file=./key')
 })
 
 test('File maintained as-is', () => {
-    fileUtility.createFile.mockReturnValue("./key");
+    fileUtility.mockReturnValue("./key");
     expect(fromLiteralsToFromFile("--from-file=./filepath")).toBe(' --from-file=./filepath')
 })
 
 test('Any other arguments maintained as-is', () => {
-    fileUtility.createFile.mockReturnValue("./key");
+    fileUtility.mockReturnValue("./key");
     expect(fromLiteralsToFromFile("--otherArgument=value")).toBe(' --otherArgument=value')
 })
 
@@ -25,7 +26,7 @@ test('Invalid case, no value for secret', () => {
 })
 
 test('Multiple commnads combined', () => {
-    fileUtility.createFile.mockReturnValue("./key");
+    fileUtility.mockReturnValue("./key");
     expect(fromLiteralsToFromFile("--from-literal=key=value --from-file=./filepath --otherArgument=value"))
         .toBe(' --from-file=./key --from-file=./filepath  --otherArgument=value')
 })

@@ -107,7 +107,7 @@ function getGenericSecretArguments(secretName: string): string[] {
  * Takes a valid kubectl arguments and parses --from-literal to --from-file
  * @param secretArguments 
  */
-function fromLiteralsToFromFile(secretArguments: string): string {
+export function fromLiteralsToFromFile(secretArguments: string): string {
     const parsedArgument = secretArguments.split("--").reduce((argumentsBuilder, argument) => {
         if (argument && !argument.startsWith("from-literal=")) {
             argumentsBuilder += " --" + argument;
@@ -138,5 +138,3 @@ async function run() {
 }
 
 run().catch(core.setFailed);
-
-module.exports = fromLiteralsToFromFile;
