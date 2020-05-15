@@ -117,7 +117,7 @@ export function fromLiteralsToFromFile(secretArguments: string): string {
             Hence the substring than a split*/
             if (command.indexOf("=") == -1) throw new Error('Invalid from-literal input. It should contain a key and value');
             const secretName = command.substring(0, command.indexOf("="));
-            const secretValue = command.substring(command.indexOf("=") + 1);
+            const secretValue = command.substring(command.indexOf("=") + 1).trim();
             argumentsBuilder += " --from-file=" + fileUtility.createFile(secretName.trim(), secretValue, true);
         }
         return argumentsBuilder;

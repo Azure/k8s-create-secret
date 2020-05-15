@@ -8,12 +8,24 @@ const fileUtility = mocked(fs, true);
 
 beforeAll(() => {
     process.env['RUNNER_TEMP'] = '/home/runner/work/_temp';
-    fileUtility.writeFileSync = jest.fn();
 })
 
 test('Literal converted to file', () => {
     var filePath = path.join(process.env['RUNNER_TEMP'], "key1");
-    expect(fromLiteralsToFromFile("--from-literal=key1=value")).toBe(' --from-file=' + filePath)
+    fileUtility.writeFileSync = jest.fn();
+    expect(fromLiteralsToFromFile("--from-literal=key1=value")).toBe(' --from-file=' + filePath);
+    expect(fileUtility.writeFileSync).toBeCalledWith(filePath, "value");
+})
+
+test('Multiple literal converted to file', () => {
+    var filePath1 = path.join(process.env['RUNNER_TEMP'], "key1");
+    var filePath2 = path.join(process.env['RUNNER_TEMP'], "key2");
+    fileUtility.writeFileSync = jest.fn();
+    expect(fromLiteralsToFromFile("--from-literal=key1=value1 --from-literal=key2=value2")).toBe(' --from-file=' + filePath1+' --from-file=' + filePath2);
+    expect(fileUtility.writeFileSync.mock.calls).toEqual([
+        [filePath1, "value1"],
+        [filePath2, "value2"]
+    ])
 })
 
 test('File maintained as-is', () => {
@@ -34,8 +46,18 @@ test('Invalid case, no value for secret', () => {
 
 test('Multiple commnads combined', () => {
     var filePath = path.join(process.env['RUNNER_TEMP'], "key2");
+    fileUtility.writeFileSync = jest.fn();
     expect(fromLiteralsToFromFile("--from-literal=key2=value --from-file=./filepath --otherArgument=value"))
-        .toBe('--from-file=' + filePath + ' --from-file=./filepath --otherArgument=value')
+        .toBe('--from-file=' + filePath + ' --from-file=./filepath --otherArgument=value');
+    expect(fileUtility.writeFileSync).toBeCalledWith(filePath, "value");
+})
+
+test('Trailing space in secret is igonered', () => {
+    var filePath = path.join(process.env['RUNNER_TEMP'], "key2");
+    fileUtility.writeFileSync = jest.fn();
+    expect(fromLiteralsToFromFile("--from-literal=key2=value            --from-file=./filepath --otherArgument=value"))
+        .toBe('--from-file=' + filePath + ' --from-file=./filepath --otherArgument=value');
+    expect(fileUtility.writeFileSync).toBeCalledWith(filePath, "value");
 })
 
 test('No separator ', () => {
@@ -44,20 +66,28 @@ test('No separator ', () => {
 
 test('Special characters & in value', () => {
     var filePath = path.join(process.env['RUNNER_TEMP'], "key3");
-    expect(fromLiteralsToFromFile("--from-literal=key3=hello&world")).toBe(' --from-file=' + filePath)
+    fileUtility.writeFileSync = jest.fn();
+    expect(fromLiteralsToFromFile("--from-literal=key3=hello&world")).toBe(' --from-file=' + filePath);
+    expect(fileUtility.writeFileSync).toBeCalledWith(filePath, "hello&world");
 })
 
 test('Special characters # in value', () => {
     var filePath = path.join(process.env['RUNNER_TEMP'], "key4");
-    expect(fromLiteralsToFromFile("--from-literal=key4=hello#world")).toBe(' --from-file=' + filePath)
+    fileUtility.writeFileSync = jest.fn();
+    expect(fromLiteralsToFromFile("--from-literal=key4=hello#world")).toBe(' --from-file=' + filePath);
+    expect(fileUtility.writeFileSync).toBeCalledWith(filePath, "hello#world");
 })
 
 test('Special characters = in value', () => {
     var filePath = path.join(process.env['RUNNER_TEMP'], "key5");
-    expect(fromLiteralsToFromFile("--from-literal=key5=hello=world")).toBe(' --from-file=' + filePath)
+    fileUtility.writeFileSync = jest.fn();
+    expect(fromLiteralsToFromFile("--from-literal=key5=hello=world")).toBe(' --from-file=' + filePath);
+    expect(fileUtility.writeFileSync).toBeCalledWith(filePath, "hello=world");
 })
 
 test('Special characters in value', () => {
     var filePath = path.join(process.env['RUNNER_TEMP'], "key6");
-    expect(fromLiteralsToFromFile("--from-literal=key6=&^)@!&^@)")).toBe(' --from-file=' + filePath)
+    fileUtility.writeFileSync = jest.fn();
+    expect(fromLiteralsToFromFile("--from-literal=key6=&^)@!&^@)")).toBe(' --from-file=' + filePath);
+    expect(fileUtility.writeFileSync).toBeCalledWith(filePath, "&^)@!&^@)");
 })
