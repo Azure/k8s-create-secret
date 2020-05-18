@@ -116,13 +116,19 @@ export function fromLiteralsToFromFile(secretArguments: string): string {
             /* The command starting after 'from-literal=' contanis a 'key=value' format. The secret itself might contain a '=', 
             Hence the substring than a split*/
             if (command.indexOf("=") == -1) throw new Error('Invalid from-literal input. It should contain a key and value');
-            const secretName = command.substring(0, command.indexOf("="));
-            const secretValue = command.substring(command.indexOf("=") + 1).trim();
-            argumentsBuilder += " --from-file=" + fileUtility.createFile(secretName.trim(), secretValue, true);
+            const secretName = command.substring(0, command.indexOf("=")).trim();
+            var secretValue = command.substring(command.indexOf("=") + 1).trim();
+            //Secret with spaces will be enclosed in quotes -> "secret "
+            if (secretValue && secretValue.indexOf("\"") == 0 && secretValue.lastIndexOf("\"") == secretValue.length - 1) {
+                secretValue = secretValue.substring(1, secretValue.lastIndexOf("\""));
+            } else {
+                secretValue = secretValue.substring(0, secretValue.indexOf(" ") == -1 ? secretValue.length : secretValue.indexOf(" "));
+            }
+            argumentsBuilder += " --from-file=" + fileUtility.createFile(secretName, secretValue, true);
         }
         return argumentsBuilder;
     });
-    return parsedArgument;
+    return parsedArgument.trim();
 }
 
 function checkClusterContext() {
