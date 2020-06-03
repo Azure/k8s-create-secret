@@ -6,6 +6,8 @@ import * as path from 'path';
 import * as os from 'os';
 import * as io from '@actions/io';
 
+import fileUtility = require('./file.utility')
+
 let kubectlPath = "";
 
 async function checkAndSetKubectlPath() {
@@ -95,9 +97,39 @@ function getDockerSecretArguments(secretName: string): string[] {
 
 function getGenericSecretArguments(secretName: string): string[] {
     const secretArguments = core.getInput('arguments');
+    const parsedArgument = fromLiteralsToFromFile(secretArguments);
     let args = ['create', 'secret', 'generic', secretName];
-    args.push(...argStringToArray(secretArguments));
+    args.push(...argStringToArray(parsedArgument));
     return args;
+}
+
+/**
+ * Takes a valid kubectl arguments and parses --from-literal to --from-file
+ * @param secretArguments 
+ */
+export function fromLiteralsToFromFile(secretArguments: string): string {
+    const parsedArgument = secretArguments.split("--").reduce((argumentsBuilder, argument) => {
+        if (argument && !argument.startsWith("from-literal=")) {
+            argumentsBuilder = argumentsBuilder.trim() + " --" + argument;
+        } else if (argument && argument.startsWith("from-literal=")) {
+            const command = argument.substring("from-literal=".length);
+            /* The command starting after 'from-literal=' contanis a 'key=value' format. The secret itself might contain a '=', 
+            Hence the substring than a split*/
+            if (command.indexOf("=") == -1) throw new Error('Invalid from-literal input. It should contain a key and value');
+            const secretName = command.substring(0, command.indexOf("=")).trim();
+            const secretValue = command.substring(command.indexOf("=") + 1).trim();
+            //Secret with spaces will be enclosed in quotes -> "secret "
+            if (secretValue && secretValue.indexOf("\"") == 0 && secretValue.lastIndexOf("\"") == secretValue.length - 1) {
+                const secret = secretValue.substring(1, secretValue.lastIndexOf("\""));
+                argumentsBuilder += " --from-file=" + fileUtility.createFile(secretName, secret, true);
+            } else {
+                const secret = secretValue.substring(0, secretValue.indexOf(" ") == -1 ? secretValue.length : secretValue.indexOf(" "));
+                argumentsBuilder += " --from-file=" + fileUtility.createFile(secretName, secret, true);
+            }
+        }
+        return argumentsBuilder;
+    });
+    return parsedArgument.trim();
 }
 
 function checkClusterContext() {
