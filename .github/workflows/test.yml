@@ -47,7 +47,6 @@ jobs:
                 elseif (!$middle) 
                 {
                     $middle = $true; 
-                    $middle_index = $count 
                 } 
                 elseif (!$end) 
                 { 
