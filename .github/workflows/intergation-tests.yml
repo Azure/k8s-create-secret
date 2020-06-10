@@ -1,0 +1,22 @@
+name: "Trigger Integration tests"
+on:
+  push:
+    branches:
+      - 'releases/*'
+  pull_request:
+    branches:
+      - 'releases/*'
+jobs: 
+    trigger-integration-tests:
+      name: Trigger Integration tests
+      runs-on: ubuntu-latest
+      steps:
+        - name: Trigger Test run
+          run: |
+           response=$(curl -X POST -H "Authorization: token ${{ secrets.L2_REPO_TOKEN }}" https://api.github.com/repos/Azure/azure-actions-integration-tests/dispatches --data '{"event_type": "K8sCreateSecret", "client_payload": {"action": "CreateSecret", "commit": "${{ github.event.pull_request.head.sha }}", "repository":  "${{ github.repository }}", "prNumber": "${{ github.event.pull_request.number }}", "tobranch": "${{ github.event.pull_request.base.ref }}",  "frombranch": "${{ github.event.pull_request.head.ref }}", "token": "${{ secrets.GITHUB_TOKEN }}" }}')
+           if [ "$response" == "" ]; then 
+            echo "Integration tests triggered successfully"; 
+           else 
+            echo "Triggering integration tests failed with: '$response'";
+            exit 1;
+           fi 
