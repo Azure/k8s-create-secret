@@ -8,7 +8,7 @@ Refer to the action metadata file for details about all the inputs https://githu
 ## For docker-registry secret (imagepullsecret)
 ```yaml
     - name: Set imagePullSecret
-      uses: azure/k8s-create-secret@v1
+      uses: azure/k8s-create-secret@v1.1
       with:
         namespace: 'myapp'
         container-registry-url: 'containerregistry.contoso.com'
@@ -20,7 +20,7 @@ Refer to the action metadata file for details about all the inputs https://githu
 
 ## For generic secret
 ```yaml
-    - uses: azure/k8s-create-secret@v1
+    - uses: azure/k8s-create-secret@v1.1
       with:
         namespace: 'default'
         secret-type: 'generic'
