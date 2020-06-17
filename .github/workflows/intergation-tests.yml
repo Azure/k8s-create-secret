@@ -13,7 +13,8 @@ jobs:
       steps:
         - name: Trigger Test run
           run: |
-           response=$(curl -X POST -H "Authorization: token ${{ secrets.L2_REPO_TOKEN }}" https://api.github.com/repos/Azure/azure-actions-integration-tests/dispatches --data '{"event_type": "K8sCreateSecret", "client_payload": {"action": "CreateSecret", "commit": "${{ github.event.pull_request.head.sha }}", "repository":  "${{ github.repository }}", "prNumber": "${{ github.event.pull_request.number }}", "tobranch": "${{ github.event.pull_request.base.ref }}",  "frombranch": "${{ github.event.pull_request.head.ref }}", "token": "${{ secrets.GITHUB_TOKEN }}" }}')
+           response=$(curl -X POST -H "Authorization: token ${{ secrets.L2_REPO_TOKEN }}" https://api.github.com/repos/Azure/azure-actions-integration-tests/dispatches --data '{"event_type": "K8sCreateSecret", "client_payload": {"action": "CreateSecret", "commit": "${{ github.event.pull_request.head.sha }}", "repository":  "${{ github.repository }}", "prNumber": "${{ github.event.pull_request.number }}", "tobranch": "${{ github.event.pull_request.base.ref }}",  "frombranch": "${{ github.event.pull_request.head.ref }}"}}')
+           echo "${response}"
            if [ "$response" == "" ]; then 
             echo "Integration tests triggered successfully"; 
            else 
