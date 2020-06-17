@@ -21,7 +21,7 @@ jobs:
         - name: Trigger Test run
           if: github.event.pull_request.base.ref == 'releases/v1' || steps.extract_branch.outputs.branchname == 'releases/v1' || github.event.pull_request.base.ref == 'master' || steps.extract_branch.outputs.branchname == 'master'
           run: |
-           response=$(curl -X POST -H "Authorization: token ${{ secrets.L2_REPO_TOKEN }}" https://api.github.com/repos/rgsubh/l2-integration-tests/dispatches --data '{"event_type": "K8sCreateSecretReleasesPR", "client_payload": {"action": "CreateSecret", "commit": "${{ github.event.pull_request.head.sha }}", "repository":  "${{ github.repository }}", "prNumber": "${{ github.event.pull_request.number }}", "tobranch": "${{ github.event.pull_request.base.ref }}",  "frombranch": "${{ github.event.pull_request.head.ref }}" }}')
+           response=$(curl -X POST -H "Authorization: token ${{ secrets.L2_REPO_TOKEN }}" https://api.github.com/repos/Azure/azure-actions-integration-tests/dispatches --data '{"event_type": "K8sCreateSecretReleasesPR", "client_payload": {"action": "CreateSecret", "commit": "${{ github.event.pull_request.head.sha }}", "repository":  "${{ github.repository }}", "prNumber": "${{ github.event.pull_request.number }}", "tobranch": "${{ github.event.pull_request.base.ref }}",  "frombranch": "${{ github.event.pull_request.head.ref }}" }}')
            if [ "$response" == "" ]; then 
             echo "Integration tests triggered successfully"; 
            else 
