@@ -37,6 +37,7 @@ In the above example the secret name is `REGISTRY_USERNAME` and `REGISTRY_PASSWO
 ```yaml
 container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
 ```
+k8s-create-secret GitHub Actions is supported on both 'AzureUSGovernment' or 'AzureChinaCloud'.Login to the respective Azure Cloud before running k8s-create-secret using [Azure Login](https://github.com/Azure/login)
 
 # Contributing
 
