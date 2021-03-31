@@ -1,4 +1,4 @@
-# Kubernetes create secret
+# Kubernetes create secret 
 Create a [generic secret or docker-registry secret](https://kubernetes.io/docs/concepts/configuration/secret/) in Kubernetes cluster.
 
 The secret will be created in the cluster context which was set earlier in the workflow by using either [`azure/aks-set-context`](https://github.com/Azure/aks-set-context/tree/master) or [`azure/k8s-set-context`](https://github.com/Azure/k8s-set-context/tree/master)
