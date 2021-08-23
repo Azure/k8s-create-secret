@@ -7,6 +7,14 @@ Refer to the action metadata file for details about all the inputs https://githu
 
 ## For docker-registry secret (imagepullsecret)
 ```yaml
+# File: .github/workflows/workflow.yml
+
+on: push
+
+jobs:
+  example-job:    
+    runs-on: ubuntu-latest
+    steps: 
     - name: Set imagePullSecret
       uses: azure/k8s-create-secret@v1
       with:
@@ -20,6 +28,14 @@ Refer to the action metadata file for details about all the inputs https://githu
 
 ## For generic secret
 ```yaml
+# File: .github/workflows/workflow.yml
+
+on: push
+
+jobs:
+  example-job:    
+    runs-on: ubuntu-latest
+    steps: 
     - uses: azure/k8s-create-secret@v1
       with:
         namespace: 'default'
