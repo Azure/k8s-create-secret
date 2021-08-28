@@ -5,7 +5,7 @@ The secret will be created in the cluster context which was set earlier in the w
 
 Refer to the action metadata file for details about all the inputs https://github.com/Azure/k8s-create-secret/blob/master/action.yml
 
-## For docker-registry secret (imagepullsecret)
+## Sample workflow for docker-registry secret (imagepullsecret)
 ```yaml
 # File: .github/workflows/workflow.yml
 
@@ -26,7 +26,7 @@ jobs:
       id: create-secret
 ```
 
-## For generic secret
+## Sample workflow for generic secret
 ```yaml
 # File: .github/workflows/workflow.yml
 
