@@ -6,7 +6,10 @@ import * as path from 'path';
 import * as os from 'os';
 import * as io from '@actions/io';
 
+const k8s = require('@kubernetes/client-node');
+
 import fileUtility = require('./file.utility')
+import { CoreV1Api, KubeConfig, V1Secret } from '@kubernetes/client-node';
 
 let kubectlPath = "";
 
@@ -142,6 +145,25 @@ async function run() {
     checkClusterContext();
     await checkAndSetKubectlPath();
     await createSecret();
+}
+
+async function run2() {
+    const kc: KubeConfig = new k8s.KubeConfig();
+    kc.loadFromDefault();
+
+    const api: CoreV1Api = kc.makeApiClient(k8s.CoreV1Api);
+    const secretType: string = core.getInput('secret-type', { required: true });
+
+    const namespace: string = core.getInput('namespace');
+
+    const secret: V1Secret = {
+        type: secretType
+    }
+
+    const resp = await api.createNamespacedSecret(namespace, secret)
+
+    console.log(resp)
+    return
 }
 
 run().catch(core.setFailed);
