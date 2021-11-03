@@ -1,0 +1,18 @@
+{
+    "pull_request": {
+        "head": {
+            "label": "davidgamero:",
+            "repo": {
+                "full_name": "davidgamero:repo"
+            }
+        },
+        "base": {
+            "ref": "releases/v1"
+        },
+        "labels": {
+            "*": {
+                "name": "run-tests"
+            }
+        }
+    }
+}

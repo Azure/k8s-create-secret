@@ -1,0 +1,65 @@
+name: "Trigger Integration tests"
+on:
+  push:
+    branches:
+      - master
+      - "releases/*"
+  pull_request_target:
+    types: [labeled, opened]
+    branches:
+      - master
+      - "releases/*"
+
+jobs:
+  aks-integration-tests:
+    name: K8S Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.TEST_CLUSTER_KUBECONFIG}}
+        id: setcontext
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          ref: "davidgamero/k8s-client-refactor"
+          token:
+      - run: |
+          npm install
+      - uses: ./
+        id: call-create-secret
+        with:
+          secret-name: integration-test-secret
+          secret-type: generic
+          string-data: '{ "test-key": "test-value" }'
+  trigger-integration-tests:
+    name: Trigger Integration tests
+    if: startsWith(github.event.pull_request.head.label, format('{0}:',github.repository_owner)) || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          path: IntegrationTests
+
+      - name: Extract branch name
+        id: extract_branch
+        run: |
+          echo "##[set-output name=branchname;]$(echo ${GITHUB_REF##*/})"
+
+      - name: Trigger Test run
+        if: |
+          github.event.pull_request.base.ref == 'releases/v1' || steps.extract_branch.outputs.branchname == 'releases/v1' || 
+          github.event.pull_request.base.ref == 'master' || steps.extract_branch.outputs.branchname == 'master'
+        env:
+          token: ${{ secrets.L2_REPO_TOKEN }}
+          commit: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.repository }}
+          prnumber: ${{ github.event.pull_request.number }}
+          prsource: ${{ github.event.pull_request.head.ref }}
+          prtarget: ${{ github.event.pull_request.base.ref }}
+          username: ${{ secrets.L2_REPO_USER }}
+          prsourcerepository: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          bash ./IntegrationTests/.github/workflows/TriggerIntegrationTests.sh $token $commit $repository $prnumber $prsource $prtarget $username $prsourcerepository
