@@ -179,4 +179,4 @@ async function run2() {
     return
 }
 
-run().catch(core.setFailed);
+run2().catch(core.setFailed);

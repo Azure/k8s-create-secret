@@ -21,10 +21,9 @@ jobs:
           kubeconfig: ${{ secrets.TEST_CLUSTER_KUBECONFIG}}
         id: setcontext
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
-          ref: "davidgamero/k8s-client-refactor"
-          token:
+          ref: davidgamero/k8-client-refactor
       - run: |
           npm install
       - uses: ./
