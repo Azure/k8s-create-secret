@@ -178,5 +178,5 @@ async function run2() {
     console.log(resp)
     return
 }
-
+console.log('hello world!')
 run2().catch(core.setFailed);

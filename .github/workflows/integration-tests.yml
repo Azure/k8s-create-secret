@@ -23,10 +23,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2.3.4
         with:
+          path: k8s-create-secret
           ref: davidgamero/k8-client-refactor
       - run: |
+          cd k8s-create-secret
           npm install
-      - uses: ./
+          npm run build
+      - uses: ./k8s-create-secret
         id: call-create-secret
         with:
           secret-name: integration-test-secret
