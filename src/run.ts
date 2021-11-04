@@ -9,7 +9,7 @@ import * as io from '@actions/io';
 const k8s = require('@kubernetes/client-node');
 
 import fileUtility = require('./file.utility')
-import { CoreV1Api, KubeConfig, V1Secret } from '@kubernetes/client-node';
+import { CoreV1Api, KubeConfig, V1ObjectMeta, V1Secret } from '@kubernetes/client-node';
 
 let kubectlPath = "";
 
@@ -157,9 +157,16 @@ async function run2() {
 
     // The secret type for the new secret
     const secretType: string = core.getInput('secret-type', { required: true });
+    const secretName: string = core.getInput('secret-name', { required: true });
 
     // The namespace in which to place the secret
     const namespace: string = core.getInput('namespace') || 'default';
+
+
+    let metaData: V1ObjectMeta = {
+        name: secretName,
+        namespace: namespace
+    }
 
     // The serialized form of the secret data is a base64 encoded string
     let data: { [key: string]: string } = {}
@@ -178,17 +185,16 @@ async function run2() {
     // Create secret object for passing to the api
     console.log(`creating V1Secret`)
     const secret: V1Secret = {
+        apiVersion: 'v1',
         type: secretType,
         data: data,
-        stringData: stringData
+        stringData: stringData,
+        metadata: metaData
     }
 
     let result;
 
     try {
-        api.listNamespacedPod('default').then((res) => {
-            console.log(res.body);
-        });
         api.listSecretForAllNamespaces().then((res) => {
             console.log(res.body)
         })
