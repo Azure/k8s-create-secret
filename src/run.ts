@@ -9,7 +9,7 @@ import * as io from '@actions/io';
 const k8s = require('@kubernetes/client-node');
 
 import fileUtility = require('./file.utility')
-import { CoreV1Api, KubeConfig, V1ObjectMeta, V1Secret } from '@kubernetes/client-node';
+import { CoreV1Api, KubeConfig, V1ObjectMeta, V1Secret, HttpError } from '@kubernetes/client-node';
 
 let kubectlPath = "";
 
@@ -198,10 +198,10 @@ async function run2() {
 
     try {
         result = await api.createNamespacedSecret(namespace, secret)
-    } catch (e) {
+    } catch (e: any) {
         console.log(`Failed to create secret with error: ${e}`)
         console.log(e)
-        console.log(e.response?.client?.body)
+        console.log(e?.body)
     }
 
     console.log(result)
