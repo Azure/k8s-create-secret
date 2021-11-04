@@ -15,10 +15,13 @@ jobs:
     name: K8S Integration Tests
     runs-on: ubuntu-latest
     steps:
+      - uses: azure/setup-kubectl@v1
+        id: setup-kubectl
       - uses: azure/k8s-set-context@v1
         with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.TEST_CLUSTER_KUBECONFIG}}
+          creds: "${{ secrets.AZURE_CREDENTIALS }}" # Azure credentials
+          resource-group: davidgamero-ghactions-test
+          cluster-name: davidgamero-ghactions-test
         id: setcontext
       - name: Check out repository
         uses: actions/checkout@v2.3.4
@@ -29,6 +32,7 @@ jobs:
           cd k8s-create-secret
           npm install
           npm run build
+          echo "$KUBECONFIG"
       - uses: ./k8s-create-secret
         id: call-create-secret
         with:
