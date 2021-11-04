@@ -200,6 +200,7 @@ async function run2() {
         result = await api.createNamespacedSecret(namespace, secret)
     } catch (e) {
         console.log(`Failed to create secret with error: ${e}`)
+        console.log(e)
     }
 
     console.log(result)
