@@ -202,7 +202,8 @@ async function run2() {
         console.log(`Failed to create secret with error: ${e}`)
         console.log(e)
         let body = e?.response?.body
-        console.log(`Response Body: ${body}`)
+        console.log(`Response Body:`)
+        console.log(body)
     }
 
     console.log(result)
