@@ -148,7 +148,7 @@ async function run() {
 }
 
 async function run2() {
-    //checkClusterContext()
+    checkClusterContext()
 
     // Create kubeconfig and load values from 'KUBECONFIG' environment variable
     const kc: KubeConfig = new k8s.KubeConfig();
