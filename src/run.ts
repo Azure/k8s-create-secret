@@ -186,6 +186,9 @@ async function run2() {
     let result;
 
     try {
+        api.listNamespacedPod('default').then((res) => {
+            console.log(res.body);
+        });
         result = await api.createNamespacedSecret(namespace, secret)
     } catch (e) {
         console.log(`Failed to create secret with error: ${e}`)
