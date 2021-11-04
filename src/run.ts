@@ -183,13 +183,15 @@ async function run2() {
         stringData: stringData
     }
 
+    let result;
+
     try {
-        const resp = await api.createNamespacedSecret(namespace, secret)
+        result = await api.createNamespacedSecret(namespace, secret)
     } catch (e) {
         console.log(`Failed to create secret with error: ${e}`)
     }
 
-    console.log(resp)
+    console.log(result)
     return
 }
 
