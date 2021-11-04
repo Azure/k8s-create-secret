@@ -37,7 +37,7 @@ jobs:
         with:
           secret-name: integration-test-secret
           secret-type: generic
-          string-data: '{ "test-key": "test-value" }'
+          string-data: '{ "testKey": "testValue" }'
   trigger-integration-tests:
     name: Trigger Integration tests
     if: startsWith(github.event.pull_request.head.label, format('{0}:',github.repository_owner)) || contains(github.event.pull_request.labels.*.name, 'run-tests')
