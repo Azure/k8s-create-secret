@@ -201,7 +201,7 @@ async function run2() {
     } catch (e) {
         console.log(`Failed to create secret with error: ${e}`)
         console.log(e)
-        console.log(e?.body)
+        console.log(e?.response?.body)
     }
 
     console.log(result)
