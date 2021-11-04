@@ -150,6 +150,7 @@ async function run() {
 async function run2() {
     // Create kubeconfig and load values from 'KUBECONFIG' environment variable
     const kc: KubeConfig = new k8s.KubeConfig();
+    console.log(`loading kubeconfig from defaults...`)
     kc.loadFromDefault();
 
     const api: CoreV1Api = kc.makeApiClient(k8s.CoreV1Api);
@@ -161,12 +162,21 @@ async function run2() {
     const namespace: string = core.getInput('namespace') || 'default';
 
     // The serialized form of the secret data is a base64 encoded string
-    const data: { [key: string]: string } = JSON.parse(core.getInput('data')) || {}
+    let data: { [key: string]: string } = {}
+    if (core.getInput('data')) {
+        console.log(`loading 'data' field`)
+        data = JSON.parse(core.getInput('data'))
+    }
 
     // The plaintext form of the secret data
-    const stringData: { [key: string]: string } = JSON.parse(core.getInput('string-data')) || {}
+    let stringData: { [key: string]: string } = {}
+    if (core.getInput('string-data')) {
+        console.log(`loading 'string-data' field`)
+        stringData = JSON.parse(core.getInput('string-data'))
+    }
 
     // Create secret object for passing to the api
+    console.log(`creating V1Secret`)
     const secret: V1Secret = {
         type: secretType,
         data: data,
@@ -178,5 +188,5 @@ async function run2() {
     console.log(resp)
     return
 }
-console.log('hello world!')
+
 run2().catch(core.setFailed);
