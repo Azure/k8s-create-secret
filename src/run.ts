@@ -148,6 +148,8 @@ async function run() {
 }
 
 async function run2() {
+    checkClusterContext()
+
     // Create kubeconfig and load values from 'KUBECONFIG' environment variable
     const kc: KubeConfig = new k8s.KubeConfig();
     console.log(`loading kubeconfig from defaults...`)
@@ -195,9 +197,6 @@ async function run2() {
     let result;
 
     try {
-        api.listSecretForAllNamespaces().then((res) => {
-            console.log(res.body)
-        })
         result = await api.createNamespacedSecret(namespace, secret)
     } catch (e) {
         console.log(`Failed to create secret with error: ${e}`)
