@@ -28,7 +28,8 @@ jobs:
         with:
           path: k8s-create-secret
           ref: davidgamero/k8-client-refactor
-      - run: |
+      - id: action-npm-build
+        run: |
           cd k8s-create-secret
           npm install
           npm run build

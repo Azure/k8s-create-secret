@@ -5,6 +5,8 @@ The secret will be created in the cluster context which was set earlier in the w
 
 Refer to the action metadata file for details about all the inputs https://github.com/Azure/k8s-create-secret/blob/master/action.yml
 
+For `docker-registry` type secrets, the fields `.dockercfg` or `.dockerconfigjson` can be supplied in plaintext on the `string-data` JSON object, or base64 encoded on the `data` JSON object as included in the [docker-config-secrets](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) section.
+
 ## Sample workflow for docker-registry secret (imagepullsecret)
 ```yaml
 # File: .github/workflows/workflow.yml
@@ -23,6 +25,7 @@ jobs:
         container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
         container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
         secret-name: 'contoso-cr'
+        string-data: ${{ secrets.SECRET_STRING_DATA}}
       id: create-secret
 ```
 
@@ -40,7 +43,7 @@ jobs:
       with:
         namespace: 'default'
         secret-type: 'generic'
-        arguments:  --from-literal=account-name=${{ secrets.AZURE_STORAGE_ACCOUNT }} --from-literal=access-key=${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+        data:  ${{ secrets.AZURE_STORAGE_ACCOUNT_DATA }}
         secret-name: azure-storage
 ```
 

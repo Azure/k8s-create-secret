@@ -5,18 +5,6 @@ inputs:
   namespace:
     description: "Choose the target Kubernetes namespace. If the namespace is not provided, the commands will run in the default namespace."
     required: false
-  container-registry-url:
-    description: "Container registry url"
-    required: false
-  container-registry-username:
-    description: "Container registry username"
-    required: false
-  container-registry-password:
-    description: "Container registry password"
-    required: false
-  container-registry-email:
-    description: "Container registry email"
-    required: false
   secret-type:
     description: "Type of Kubernetes secret. For example, docker-registry or generic"
     required: true
@@ -28,7 +16,10 @@ inputs:
     description: 'Specify keys and literal values to insert in generic type secret.For example, --from-literal=key1=value1 --from-literal=key2="top secret".'
     required: false
   string-data:
-    description: "JSON object with plaintext string data for secret"
+    description: 'JSON object with plaintext string data for secret ex: {"key1":"value1"}'
+    required: false
+  data:
+    description: 'JSON object with the serialized form of the secret data in a base64 encoded string ex: {"key1":"[base64 encoded data]"}'
     required: false
 outputs:
   secret-name:
