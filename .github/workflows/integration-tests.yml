@@ -45,7 +45,7 @@ jobs:
       - id: validate-secret-creation
         run: |
           export VAL="$(kubectl get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
-          if [ "$VAL" = "testValue" ] then
+          if [ "$VAL" = "testValue" ]; then
             echo "successful secret creation"
           else
             echo "failed to read secret after creation"
