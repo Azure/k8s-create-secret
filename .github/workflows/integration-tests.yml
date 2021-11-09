@@ -44,7 +44,7 @@ jobs:
           string-data: '{ "testKey": "testValue" }'
       - id: validate-secret-creation
         run: |
-          export VAL="$(k get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
+          export VAL="$(kubectl get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
           if [ "$VAL" = "testValue" ] then
             echo "successful secret creation"
           else
