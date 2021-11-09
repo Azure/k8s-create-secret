@@ -17,15 +17,15 @@ jobs:
     steps:
       - uses: azure/setup-kubectl@v1
         id: setup-kubectl
-      - name: delete existing secret
-        run: |
-          kubectl delete integration-test-secret
       - uses: azure/aks-set-context@v1
         with:
           creds: "${{ secrets.AZURE_CREDENTIALS }}" # Azure credentials
           resource-group: davidgamero-ghactions-test
           cluster-name: davidgamero-ghactions-test
         id: setcontext
+      - name: delete existing secret
+        run: |
+          kubectl delete integration-test-secret
       - name: Check out repository
         uses: actions/checkout@v2.3.4
         with:
