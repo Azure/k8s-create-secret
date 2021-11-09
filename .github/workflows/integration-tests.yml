@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: azure/setup-kubectl@v1
         id: setup-kubectl
+      - name: delete existing secret
+        run: |
+          kubectl delete integration-test-secret
       - uses: azure/aks-set-context@v1
         with:
           creds: "${{ secrets.AZURE_CREDENTIALS }}" # Azure credentials
@@ -39,6 +42,16 @@ jobs:
           secret-name: integration-test-secret
           secret-type: generic
           string-data: '{ "testKey": "testValue" }'
+      - id: validate-secret-creation
+        run: |
+          export VAL="$(k get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
+          if [ "$VAL" = "testValue" ] then
+            echo "successful secret creation"
+          else
+            echo "failed to read secret after creation"
+            echo "VAL=$VAL"
+            exit 1
+          fi
   trigger-integration-tests:
     name: Trigger Integration tests
     if: startsWith(github.event.pull_request.head.label, format('{0}:',github.repository_owner)) || contains(github.event.pull_request.labels.*.name, 'run-tests')
