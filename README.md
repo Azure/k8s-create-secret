@@ -18,12 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
     - name: Set imagePullSecret
-      uses: azure/k8s-create-secret@v1
+      uses: azure/k8s-create-secret@v2
       with:
         namespace: 'myapp'
-        container-registry-url: 'containerregistry.contoso.com'
-        container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
-        container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+        secret-type: 'docker-registry'
         secret-name: 'contoso-cr'
         string-data: ${{ secrets.SECRET_STRING_DATA}}
       id: create-secret
@@ -43,8 +41,8 @@ jobs:
       with:
         namespace: 'default'
         secret-type: 'generic'
-        data:  ${{ secrets.AZURE_STORAGE_ACCOUNT_DATA }}
         secret-name: azure-storage
+        data:  ${{ secrets.AZURE_STORAGE_ACCOUNT_DATA }}
 ```
 
 ### Prerequisites

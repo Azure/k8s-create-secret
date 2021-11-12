@@ -12,21 +12,23 @@ on:
 
 jobs:
   aks-integration-tests:
-    name: K8S Integration Tests
+    name: AKS Integration Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: azure/setup-kubectl@v1
-        id: setup-kubectl
-      - uses: azure/aks-set-context@v1
+      - id: setup-kubectl
+        uses: azure/setup-kubectl@v1
+      - id: set-aks-context
+        uses: azure/aks-set-context@v1
         with:
           creds: "${{ secrets.AZURE_CREDENTIALS }}" # Azure credentials
-          resource-group: davidgamero-ghactions-test
-          cluster-name: davidgamero-ghactions-test
-        id: setcontext
-      - name: delete existing secret
+          resource-group: "${{ secrets.TEST_RESOURCE_GROUP }}"
+          cluster-name: "${{ secrets.TEST_CLUSTER_NAME }}"
+      - id: delete-existing-secret
+        name: delete existing secret
         run: |
           kubectl delete secret integration-test-secret
-      - name: Check out repository
+      - id: checkout-repo
+        name: Check out repository
         uses: actions/checkout@v2.3.4
         with:
           path: k8s-create-secret
@@ -36,8 +38,8 @@ jobs:
           cd k8s-create-secret
           npm install
           npm run build
-      - uses: ./k8s-create-secret
-        id: call-create-secret
+      - id: call-create-secret
+        uses: ./k8s-create-secret
         with:
           secret-name: integration-test-secret
           secret-type: generic
@@ -52,7 +54,7 @@ jobs:
             echo "VAL=$VAL"
             exit 1
           fi
-  trigger-integration-tests:
+  l2-integration-tests:
     name: Trigger Integration tests
     if: startsWith(github.event.pull_request.head.label, format('{0}:',github.repository_owner)) || contains(github.event.pull_request.labels.*.name, 'run-tests')
     runs-on: ubuntu-latest

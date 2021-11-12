@@ -12,9 +12,6 @@ inputs:
   secret-name:
     description: "Name of the secret. You can use this secret name in the Kubernetes YAML configuration file."
     required: true
-  arguments:
-    description: 'Specify keys and literal values to insert in generic type secret.For example, --from-literal=key1=value1 --from-literal=key2="top secret".'
-    required: false
   string-data:
     description: 'JSON object with plaintext string data for secret ex: {"key1":"value1"}'
     required: false
