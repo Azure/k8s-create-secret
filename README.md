@@ -7,7 +7,7 @@ Refer to the action metadata file for details about all the inputs https://githu
 
 For `docker-registry` type secrets, the fields `.dockercfg` or `.dockerconfigjson` can be supplied in plaintext on the `string-data` JSON object, or base64 encoded on the `data` JSON object as included in the [docker-config-secrets](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) section.
 
-## Sample workflow for docker-registry secret (imagepullsecret)
+## Sample workflow for docker-registry secret (imagepullsecret, stringData)
 ```yaml
 # File: .github/workflows/workflow.yml
 
@@ -27,7 +27,7 @@ jobs:
       id: create-secret
 ```
 
-## Sample workflow for generic secret
+## Sample workflow for generic secret (base64 data)
 ```yaml
 # File: .github/workflows/workflow.yml
 
@@ -47,12 +47,6 @@ jobs:
 
 ### Prerequisites
 Get the username and password of your container registry and create secrets for them. For Azure Container registry refer to **admin [account document](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-authentication#admin-account)** for username and password.
-
-Now add the username and password as [a secret](https://developer.github.com/actions/managing-workflows/storing-secrets/) in the GitHub repository.
-
-In the above example the secret name is `REGISTRY_USERNAME` and `REGISTRY_PASSWORD` and it can be used in the workflow by using the following syntax:
-```yaml
-container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
 ```
 
 # Contributing
