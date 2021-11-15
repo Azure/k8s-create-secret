@@ -65,7 +65,7 @@ async function run() {
         console.log(`Failed to create secret with error: ${e}`)
         console.log(e)
         let body = e?.response?.body
-        console.log(`Failed with response rody:`)
+        console.log(`Failed with response body:`)
         console.log(body)
         core.setFailed(body)
     }
