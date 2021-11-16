@@ -1,4 +1,6 @@
 {
+    "action": "opened",
+    "number": 3,
     "pull_request": {
         "head": {
             "label": "davidgamero:",
@@ -7,7 +9,7 @@
             }
         },
         "base": {
-            "ref": "releases/v1"
+            "ref": "master"
         },
         "labels": {
             "*": {

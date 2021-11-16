@@ -27,6 +27,18 @@ async function run() {
     // The namespace in which to place the secret
     const namespace: string = core.getInput('namespace') || 'default';
 
+    // Delete if exists
+    let deleteSecretResponse;
+    try {
+        deleteSecretResponse = await api.deleteNamespacedSecret(secretName, namespace)
+    } catch (e) {
+        let response = e?.response
+
+        console.log(`Failed to delete secret with statusCode: ${response?.statusCode}`)
+        console.log(response?.body?.metadata)
+    }
+    console.log('Deleting secret:')
+    console.log(deleteSecretResponse?.response?.body)
 
     let metaData: V1ObjectMeta = {
         name: secretName,
@@ -48,7 +60,7 @@ async function run() {
     }
 
     // Create secret object for passing to the api
-    console.log(`creating V1Secret`)
+    console.log(`creating V1Secret:`)
     const secret: V1Secret = {
         apiVersion: 'v1',
         type: secretType,
@@ -62,15 +74,16 @@ async function run() {
     try {
         result = await api.createNamespacedSecret(namespace, secret)
     } catch (e) {
-        console.log(`Failed to create secret with error: ${e}`)
-        console.log(e)
-        let body = e?.response?.body
-        console.log(`Failed with response body:`)
-        console.log(body)
-        core.setFailed(body)
+        let response = e?.response
+
+        console.log(`Failed to create secret with statusCode: ${response?.statusCode}`)
+        console.log(response?.body)
+        core.setFailed(response?.body)
     }
 
-    console.log(result)
+    let response = result?.response
+    console.log(response?.body?.metadata)
+
     return
 }
 

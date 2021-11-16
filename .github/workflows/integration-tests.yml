@@ -22,20 +22,14 @@ jobs:
       - id: delete-existing-secret
         name: delete existing secret
         run: |
-          kubectl delete secret integration-test-secret
-      - id: checkout-repo
-        name: Check out repository
-        uses: actions/checkout@v2.3.4
-        with:
-          path: k8s-create-secret
-          ref: davidgamero/k8-client-refactor
+          # kubectl delete secret integration-test-secret || { echo 'delete failed' ; exit 0; }
+      - uses: actions/checkout@v1
       - id: action-npm-build
         run: |
-          cd k8s-create-secret
           npm install
           npm run build
       - id: call-create-secret
-        uses: ./k8s-create-secret
+        uses: ./
         with:
           secret-name: integration-test-secret
           secret-type: generic
