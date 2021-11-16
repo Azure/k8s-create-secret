@@ -17,5 +17,5 @@ beforeAll(() => {
 })
 
 test('sample test', () => {
-    return true
+    expect(true).toBe(true);
 })
