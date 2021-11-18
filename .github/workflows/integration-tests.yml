@@ -30,7 +30,7 @@ jobs:
           secret-type: generic
           string-data: '{ "testKey": "testValue" }'
         env:
-          KUBECONFIG: ~/.kube/config
+          KUBECONFIG: "${HOME}/.kube/config"
       - id: validate-secret-creation
         run: |
           export VAL="$(kubectl get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
