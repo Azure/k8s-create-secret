@@ -25,11 +25,11 @@ jobs:
           npm run build
       - id: export-minikube-kubeconfig
         run: |
-          echo ::set-env name=KUBECONFIG::${HOME}/.kube/config
-          echo "KUBECONFIG=$KUBECONFIG"
+          echo "{KUBECONFIG}={${HOME}/.kube/config}" >> $GITHUB_ENV
+          echo "1 KUBECONFIG=$KUBECONFIG"
       - id: echo-kubeconfig
         run: |
-          echo "KUBECONFIG=$KUBECONFIG"
+          echo "2 KUBECONFIG=$KUBECONFIG"
       - id: call-create-secret
         uses: ./
         with:
