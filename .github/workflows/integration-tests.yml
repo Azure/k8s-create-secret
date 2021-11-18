@@ -26,6 +26,9 @@ jobs:
       - id: export-minikube-kubeconfig
         run: |
           export KUBECONFIG=${HOME}/.kube/config
+      - id: echo-kubeconfig
+        run: |
+          echo "KUBECONFIG=$KUBECONFIG"
       - id: call-create-secret
         uses: ./
         with:
