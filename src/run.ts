@@ -4,41 +4,15 @@ const k8s = require('@kubernetes/client-node');
 
 import { CoreV1Api, KubeConfig, V1ObjectMeta, V1Secret } from '@kubernetes/client-node';
 
-function checkClusterContext() {
+export function checkClusterContext() {
     if (!process.env["KUBECONFIG"]) {
         throw new Error('Cluster context not set. Use k8s-set-context/aks-set-context action to set cluster context');
     }
 }
 
-async function run() {
-    checkClusterContext()
-
-    // Create kubeconfig and load values from 'KUBECONFIG' environment variable
-    const kc: KubeConfig = new k8s.KubeConfig();
-    console.log(`loading kubeconfig from defaults...`)
-    kc.loadFromDefault();
-
-    const api: CoreV1Api = kc.makeApiClient(k8s.CoreV1Api);
-
+export async function buildSecret(secretName: string, namespace: string): Promise<V1Secret> {
     // The secret type for the new secret
     const secretType: string = core.getInput('secret-type', { required: true });
-    const secretName: string = core.getInput('secret-name', { required: true });
-
-    // The namespace in which to place the secret
-    const namespace: string = core.getInput('namespace') || 'default';
-
-    // Delete if exists
-    let deleteSecretResponse;
-    try {
-        deleteSecretResponse = await api.deleteNamespacedSecret(secretName, namespace)
-    } catch (e) {
-        let response = e?.response
-
-        console.log(`Failed to delete secret with statusCode: ${response?.statusCode}`)
-        console.log(response?.body?.metadata)
-    }
-    console.log('Deleting secret:')
-    console.log(deleteSecretResponse?.response?.body)
 
     let metaData: V1ObjectMeta = {
         name: secretName,
@@ -68,6 +42,41 @@ async function run() {
         stringData: stringData,
         metadata: metaData
     }
+
+    return secret;
+}
+
+async function run() {
+    checkClusterContext()
+
+    // Create kubeconfig and load values from 'KUBECONFIG' environment variable
+    const kc: KubeConfig = new k8s.KubeConfig();
+    console.log(`loading kubeconfig from defaults...`)
+    kc.loadFromDefault()
+
+    const api: CoreV1Api = kc.makeApiClient(k8s.CoreV1Api)
+
+    // The name of the new secret
+    const secretName: string = core.getInput('secret-name', { required: true });
+
+    // The namespace in which to place the secret
+    const namespace: string = core.getInput('namespace') || 'default';
+
+    // Delete if exists
+    let deleteSecretResponse;
+    try {
+        deleteSecretResponse = await api.deleteNamespacedSecret(secretName, namespace)
+    } catch (e) {
+        let response = e?.response
+
+        console.log(`Failed to delete secret with statusCode: ${response?.statusCode}`)
+        console.log(response?.body?.metadata)
+    }
+    console.log('Deleting secret:')
+    console.log(deleteSecretResponse?.response?.body)
+
+
+    const secret = await buildSecret(secretName, namespace)
 
     let result;
 
