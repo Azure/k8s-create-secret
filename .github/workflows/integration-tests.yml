@@ -1,7 +1,6 @@
 name: "Trigger Integration tests"
 on:
   pull_request:
-  pull_request_target:
     types: [labeled, opened]
     branches:
       - master
@@ -14,7 +13,8 @@ jobs:
     env:
       KUBECONFIG: /home/runner/.kube/config
     steps:
-      - name: Setup Minikube
+      - id: setup-minikube
+        name: Setup Minikube
         uses: manusa/actions-setup-minikube@v2.4.2
         with:
           minikube version: "v1.24.0"
@@ -22,16 +22,19 @@ jobs:
           driver: "none"
       - uses: actions/checkout@v1
       - id: action-npm-build
+        name: npm install and build
         run: |
           npm install
           npm run build
       - id: call-create-secret
+        name: execute k8s-create-secret
         uses: ./
         with:
           secret-name: integration-test-secret
           secret-type: generic
           string-data: '{ "testKey": "testValue" }'
       - id: validate-secret-creation
+        name: validate secret creation
         run: |
           export VAL="$(kubectl get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
           if [ "$VAL" = "testValue" ]; then
@@ -41,70 +44,3 @@ jobs:
             echo "VAL=$VAL"
             exit 1
           fi
-  aks-integration-tests:
-    name: AKS Integration Tests
-    runs-on: ubuntu-latest
-    steps:
-      - id: setup-kubectl
-        uses: azure/setup-kubectl@v1
-      - id: set-aks-context
-        uses: azure/aks-set-context@v1
-        with:
-          creds: "${{ secrets.AZURE_CREDENTIALS }}" # Azure credentials
-          resource-group: "${{ secrets.TEST_RESOURCE_GROUP }}"
-          cluster-name: "${{ secrets.TEST_CLUSTER_NAME }}"
-      - id: delete-existing-secret
-        name: delete existing secret
-        run: |
-          # kubectl delete secret integration-test-secret || { echo 'delete failed' ; exit 0; }
-      - uses: actions/checkout@v1
-      - id: action-npm-build
-        run: |
-          npm install
-          npm run build
-      - id: call-create-secret
-        uses: ./
-        with:
-          secret-name: integration-test-secret
-          secret-type: generic
-          string-data: '{ "testKey": "testValue" }'
-      - id: validate-secret-creation
-        run: |
-          export VAL="$(kubectl get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
-          if [ "$VAL" = "testValue" ]; then
-            echo "successful secret creation"
-          else
-            echo "failed to read secret after creation"
-            echo "VAL=$VAL"
-            exit 1
-          fi
-  l2-integration-tests:
-    name: Trigger Integration tests
-    if: startsWith(github.event.pull_request.head.label, format('{0}:',github.repository_owner)) || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-        with:
-          path: IntegrationTests
-
-      - name: Extract branch name
-        id: extract_branch
-        run: |
-          echo "##[set-output name=branchname;]$(echo ${GITHUB_REF##*/})"
-
-      - name: Trigger Test run
-        if: |
-          github.event.pull_request.base.ref == 'releases/v1' || steps.extract_branch.outputs.branchname == 'releases/v1' || 
-          github.event.pull_request.base.ref == 'master' || steps.extract_branch.outputs.branchname == 'master'
-        env:
-          token: ${{ secrets.L2_REPO_TOKEN }}
-          commit: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.repository }}
-          prnumber: ${{ github.event.pull_request.number }}
-          prsource: ${{ github.event.pull_request.head.ref }}
-          prtarget: ${{ github.event.pull_request.base.ref }}
-          username: ${{ secrets.L2_REPO_USER }}
-          prsourcerepository: ${{ github.event.pull_request.head.repo.full_name }}
-        run: |
-          bash ./IntegrationTests/.github/workflows/TriggerIntegrationTests.sh $token $commit $repository $prnumber $prsource $prtarget $username $prsourcerepository
