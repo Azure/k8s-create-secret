@@ -23,14 +23,15 @@ jobs:
         run: |
           npm install
           npm run build
+      - id: export-minikube-kubeconfig
+        run: |
+          export KUBECONFIG=${HOME}/.kube/config
       - id: call-create-secret
         uses: ./
         with:
           secret-name: integration-test-secret
           secret-type: generic
           string-data: '{ "testKey": "testValue" }'
-        env:
-          KUBECONFIG: "$HOME/.kube/config"
       - id: validate-secret-creation
         run: |
           export VAL="$(kubectl get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
