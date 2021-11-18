@@ -26,6 +26,7 @@ jobs:
       - id: export-minikube-kubeconfig
         run: |
           export KUBECONFIG=${HOME}/.kube/config
+          echo "KUBECONFIG=$KUBECONFIG"
       - id: echo-kubeconfig
         run: |
           echo "KUBECONFIG=$KUBECONFIG"
