@@ -25,7 +25,7 @@ jobs:
           npm run build
       - id: export-minikube-kubeconfig
         run: |
-          echo "{KUBECONFIG}={${HOME}/.kube/config}" >> $GITHUB_ENV
+          echo "{KUBECONFIG_PATH}={${HOME}/.kube/config}" >> $GITHUB_ENV
           echo "1 KUBECONFIG=$KUBECONFIG"
       - id: echo-kubeconfig
         run: |
