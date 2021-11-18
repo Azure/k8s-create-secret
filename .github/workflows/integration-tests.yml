@@ -1,10 +1,6 @@
 name: "Trigger Integration tests"
 on:
   pull_request:
-    types: [labeled, opened]
-    branches:
-      - master
-      - "releases/*"
 
 jobs:
   aks-minikube-integration-tests:
