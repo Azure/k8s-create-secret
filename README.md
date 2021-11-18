@@ -77,24 +77,11 @@ Example output:
 }
 ```
 
-# Running Integration Tests
+# Testing
 
-The following github secrets must be set on the repo to execute integration tests
-```
-AZURE_CREDENTIALS    // See set-aks-context README for generating this JSON
-TEST_RESOURCE_GROUP  // You must create an aks cluster on the Azure account provided in AZURE_CREDENTIALS in this resource group
-TEST_CLUSTER_NAME    // The name of the cluster to be used for testing within the TEST_RESOURCE_GROUP
-```
+Unit tests are run with [jest](https://jestjs.io/) with [ts-jest](https://www.npmjs.com/package/ts-jest) and can be found in the `./test` directory
 
-They are used in the `set-aks-context` step to connect to an aks cluster for validation secret deletio and creation
-```
-- id: set-aks-context
-  uses: azure/aks-set-context@v1
-  with:
-    creds: "${{ secrets.AZURE_CREDENTIALS }}" # Azure credentials
-    resource-group: "${{ secrets.TEST_RESOURCE_GROUP }}"
-    cluster-name: "${{ secrets.TEST_CLUSTER_NAME }}"
-```
+Integration tests use [Minikube](https://minikube.sigs.k8s.io/docs/) and are executed within workflows in `./github/workflows`
 
 # Contributing
 
