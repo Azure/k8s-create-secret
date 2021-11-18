@@ -11,6 +11,8 @@ jobs:
   aks-minikube-integration-tests:
     name: Minikube Integration Tests
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: /home/runner/.kube/config
     steps:
       - name: Setup Minikube
         uses: manusa/actions-setup-minikube@v2.4.2
@@ -23,21 +25,12 @@ jobs:
         run: |
           npm install
           npm run build
-      - id: export-minikube-kubeconfig
-        run: |
-          echo "{KUBECONFIG_PATH}={${HOME}/.kube/config}" >> $GITHUB_ENV
-          echo "1 KUBECONFIG=$KUBECONFIG"
-      - id: echo-kubeconfig
-        run: |
-          echo "2 KUBECONFIG=$KUBECONFIG"
       - id: call-create-secret
         uses: ./
         with:
           secret-name: integration-test-secret
           secret-type: generic
           string-data: '{ "testKey": "testValue" }'
-        env:
-          KUBECONFIG: /home/runner/.kube/config
       - id: validate-secret-creation
         run: |
           export VAL="$(kubectl get secret integration-test-secret --template {{.data.testKey}}| base64 -d)"
