@@ -25,7 +25,7 @@ jobs:
           npm run build
       - id: export-minikube-kubeconfig
         run: |
-          export KUBECONFIG=${HOME}/.kube/config
+          echo ::set-env name=KUBECONFIG::${HOME}/.kube/config
           echo "KUBECONFIG=$KUBECONFIG"
       - id: echo-kubeconfig
         run: |
