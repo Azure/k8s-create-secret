@@ -22,19 +22,19 @@ export async function buildSecret(secretName: string, namespace: string): Promis
     // The serialized form of the secret data is a base64 encoded string
     let data: { [key: string]: string } = {}
     if (core.getInput('data')) {
-        console.log(`loading 'data' field`)
+        core.debug(`loading 'data' field`)
         data = JSON.parse(core.getInput('data'))
     }
 
     // The plaintext form of the secret data
     let stringData: { [key: string]: string } = {}
     if (core.getInput('string-data')) {
-        console.log(`loading 'string-data' field`)
+        core.debug(`loading 'string-data' field`)
         stringData = JSON.parse(core.getInput('string-data'))
     }
 
     // Create secret object for passing to the api
-    console.log(`creating V1Secret:`)
+    core.debug(`creating V1Secret:`)
     const secret: V1Secret = {
         apiVersion: 'v1',
         type: secretType,
@@ -51,7 +51,7 @@ async function run() {
 
     // Create kubeconfig and load values from 'KUBECONFIG' environment variable
     const kc: KubeConfig = new k8s.KubeConfig();
-    console.log(`loading kubeconfig from defaults...`)
+    core.debug(`loading kubeconfig from defaults...`)
     kc.loadFromDefault()
 
     const api: CoreV1Api = kc.makeApiClient(k8s.CoreV1Api)
@@ -69,11 +69,11 @@ async function run() {
     } catch (e) {
         let response = e?.response
 
-        console.log(`Failed to delete secret with statusCode: ${response?.statusCode}`)
-        console.log(response?.body?.metadata)
+        core.debug(`Failed to delete secret with statusCode: ${response?.statusCode}`)
+        core.debug(response?.body?.metadata)
     }
-    console.log('Deleting secret:')
-    console.log(deleteSecretResponse?.response?.body)
+    core.debug('Deleting secret:')
+    core.debug(deleteSecretResponse?.response?.body)
 
 
     const secret = await buildSecret(secretName, namespace)
@@ -85,13 +85,13 @@ async function run() {
     } catch (e) {
         let response = e?.response
 
-        console.log(`Failed to create secret with statusCode: ${response?.statusCode}`)
-        console.log(response?.body)
+        core.debug(`Failed to create secret with statusCode: ${response?.statusCode}`)
+        core.debug(response?.body)
         core.setFailed(response?.body)
     }
 
     let response = result?.response
-    console.log(response?.body?.metadata)
+    core.debug(response?.body?.metadata)
 
     return
 }
