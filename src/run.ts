@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 
-const k8s = require('@kubernetes/client-node');
+import *  as k8s from '@kubernetes/client-node';
 
 import { CoreV1Api, KubeConfig, V1ObjectMeta, V1Secret } from '@kubernetes/client-node';
 
