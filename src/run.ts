@@ -69,11 +69,11 @@ async function run() {
     } catch (e) {
         let response = e?.response
 
-        core.debug(`Failed to delete secret with statusCode: ${response?.statusCode}`)
-        core.debug(response?.body?.metadata)
+        core.warning(`Failed to delete secret with statusCode: ${response?.statusCode}`)
+        core.warning(response?.body?.metadata)
     }
-    core.debug('Deleting secret:')
-    core.debug(deleteSecretResponse?.response?.body)
+    core.info('Deleting secret:')
+    core.info(deleteSecretResponse?.response?.body)
 
 
     const secret = await buildSecret(secretName, namespace)
@@ -85,9 +85,8 @@ async function run() {
     } catch (e) {
         let response = e?.response
 
-        core.debug(`Failed to create secret with statusCode: ${response?.statusCode}`)
-        core.debug(response?.body)
-        core.setFailed(response?.body)
+        core.error(`Failed to create secret with statusCode: ${response?.statusCode}`)
+        core.error(response?.body)
     }
 
     let response = result?.response
