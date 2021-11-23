@@ -1,7 +1,4 @@
 import * as core from '@actions/core';
-
-import *  as k8s from '@kubernetes/client-node';
-
 import { CoreV1Api, KubeConfig, V1ObjectMeta, V1Secret } from '@kubernetes/client-node';
 
 export function checkClusterContext() {
@@ -14,7 +11,7 @@ export async function buildSecret(secretName: string, namespace: string): Promis
     // The secret type for the new secret
     const secretType: string = core.getInput('secret-type', { required: true });
 
-    let metaData: V1ObjectMeta = {
+    const metaData: V1ObjectMeta = {
         name: secretName,
         namespace: namespace
     }
@@ -34,7 +31,7 @@ export async function buildSecret(secretName: string, namespace: string): Promis
     }
 
     // Create secret object for passing to the api
-    core.debug(`creating V1Secret:`)
+    core.debug(`creating V1Secret`)
     const secret: V1Secret = {
         apiVersion: 'v1',
         type: secretType,
@@ -50,11 +47,11 @@ async function run() {
     checkClusterContext()
 
     // Create kubeconfig and load values from 'KUBECONFIG' environment variable
-    const kc: KubeConfig = new k8s.KubeConfig();
+    const kc: KubeConfig = new KubeConfig();
     core.debug(`loading kubeconfig from defaults...`)
     kc.loadFromDefault()
 
-    const api: CoreV1Api = kc.makeApiClient(k8s.CoreV1Api)
+    const api: CoreV1Api = kc.makeApiClient(CoreV1Api)
 
     // The name of the new secret
     const secretName: string = core.getInput('secret-name', { required: true });
@@ -66,9 +63,7 @@ async function run() {
     let deleteSecretResponse;
     try {
         deleteSecretResponse = await api.deleteNamespacedSecret(secretName, namespace)
-    } catch (e) {
-        let response = e?.response
-
+    } catch ({ response }) {
         core.warning(`Failed to delete secret with statusCode: ${response?.statusCode}`)
         core.warning(response?.body?.metadata)
     }
@@ -77,21 +72,16 @@ async function run() {
 
 
     const secret = await buildSecret(secretName, namespace)
-
-    let result;
-
+    let result
     try {
         result = await api.createNamespacedSecret(namespace, secret)
-    } catch (e) {
-        let response = e?.response
-
+    } catch ({ response }) {
         core.error(`Failed to create secret with statusCode: ${response?.statusCode}`)
         core.error(response?.body)
     }
 
     let response = result?.response
     core.debug(response?.body?.metadata)
-
     return
 }
 
