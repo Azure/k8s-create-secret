@@ -82,7 +82,6 @@ async function run() {
 
     let response = result?.response
     core.debug(response?.body?.metadata)
-    return
 }
 
 run().catch(core.setFailed);
