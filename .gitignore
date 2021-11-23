@@ -331,4 +331,6 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 
+# Nektos Act Local Debugging
 .secrets
+event.json
