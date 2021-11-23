@@ -80,7 +80,7 @@ async function run() {
         core.error(response?.body)
     }
 
-    let response = result?.response
+    const response = result?.response
     core.debug(response?.body?.metadata)
 }
 
