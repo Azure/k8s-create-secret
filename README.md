@@ -1,11 +1,13 @@
 # Kubernetes create secret
-Create a [generic secret or docker-registry secret](https://kubernetes.io/docs/concepts/configuration/secret/) in Kubernetes cluster.
+Create a [generic secret or docker-registry secret](https://kubernetes.io/docs/concepts/configuration/secret/) in Kubernetes cluster, replacing the secret if it already exists.
 
 The secret will be created in the cluster context which was set earlier in the workflow by using either [`azure/aks-set-context`](https://github.com/Azure/aks-set-context/tree/master) or [`azure/k8s-set-context`](https://github.com/Azure/k8s-set-context/tree/master)
 
 Refer to the action metadata file for details about all the inputs https://github.com/Azure/k8s-create-secret/blob/master/action.yml
 
-## Sample workflow for docker-registry secret (imagepullsecret)
+For `docker-registry` type secrets, the fields `.dockercfg` or `.dockerconfigjson` can be supplied in plaintext on the `string-data` JSON object, or base64 encoded on the `data` JSON object as included in the [docker-config-secrets](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) section.
+
+## Sample workflow for docker-registry secret (imagepullsecret, stringData)
 ```yaml
 # File: .github/workflows/workflow.yml
 
@@ -16,17 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
     - name: Set imagePullSecret
-      uses: azure/k8s-create-secret@v1
+      uses: azure/k8s-create-secret@v2
       with:
         namespace: 'myapp'
-        container-registry-url: 'containerregistry.contoso.com'
-        container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
-        container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+        secret-type: 'docker-registry'
         secret-name: 'contoso-cr'
+        string-data: ${{ secrets.SECRET_STRING_DATA}}
       id: create-secret
 ```
 
-## Sample workflow for generic secret
+## Sample workflow for generic secret (base64 data)
 ```yaml
 # File: .github/workflows/workflow.yml
 
@@ -40,19 +41,47 @@ jobs:
       with:
         namespace: 'default'
         secret-type: 'generic'
-        arguments:  --from-literal=account-name=${{ secrets.AZURE_STORAGE_ACCOUNT }} --from-literal=access-key=${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
         secret-name: azure-storage
+        data:  ${{ secrets.AZURE_STORAGE_ACCOUNT_DATA }}
 ```
 
 ### Prerequisites
 Get the username and password of your container registry and create secrets for them. For Azure Container registry refer to **admin [account document](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-authentication#admin-account)** for username and password.
 
-Now add the username and password as [a secret](https://developer.github.com/actions/managing-workflows/storing-secrets/) in the GitHub repository.
+For creating docker-registery secrets, [kubectl can generate the JSON](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets)
 
-In the above example the secret name is `REGISTRY_USERNAME` and `REGISTRY_PASSWORD` and it can be used in the workflow by using the following syntax:
-```yaml
-container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
 ```
+kubectl create secret docker-registry secret-tiger-docker \
+  --docker-username=tiger \
+  --docker-password=pass113 \
+  --docker-email=tiger@acme.com \
+  --docker-server=my-registry.example:5000
+```
+
+Example output:
+```
+{
+    "apiVersion": "v1",
+    "data": {
+        ".dockerconfigjson": "eyJhdXRocyI6eyJteS1yZWdpc3RyeTo1MDAwIjp7InVzZXJuYW1lIjoidGlnZXIiLCJwYXNzd29yZCI6InBhc3MxMTMiLCJlbWFpbCI6InRpZ2VyQGFjbWUuY29tIiwiYXV0aCI6ImRHbG5aWEk2Y0dGemN6RXhNdz09In19fQ=="
+    },
+    "kind": "Secret",
+    "metadata": {
+        "creationTimestamp": "2021-07-01T07:30:59Z",
+        "name": "secret-tiger-docker",
+        "namespace": "default",
+        "resourceVersion": "566718",
+        "uid": "e15c1d7b-9071-4100-8681-f3a7a2ce89ca"
+    },
+    "type": "kubernetes.io/dockerconfigjson"
+}
+```
+
+# Testing
+
+Unit tests are run with [jest](https://jestjs.io/) with [ts-jest](https://www.npmjs.com/package/ts-jest) and can be found in the `./test` directory
+
+Integration tests use [Minikube](https://minikube.sigs.k8s.io/docs/) and are executed within workflows in `./github/workflows`
 
 # Contributing
 
