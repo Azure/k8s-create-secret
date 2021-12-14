@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KUBECONFIG: /home/runner/.kube/config
+      PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
     steps:
       - id: setup-minikube
         name: Setup Minikube
@@ -20,8 +21,11 @@ jobs:
       - id: action-npm-build
         name: npm install and build
         run: |
-          npm install
-          npm run build
+          echo $PR_BASE_REF
+          if [[ $PR_BASE_REF != releases/* ]]; then
+            npm install
+            npm run build
+          fi
       - id: call-create-secret
         name: execute k8s-create-secret
         uses: ./
