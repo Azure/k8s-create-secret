@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KUBECONFIG: /home/runner/.kube/config
-      PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+      PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
     steps:
       - id: setup-minikube
         name: Setup Minikube
@@ -21,8 +21,8 @@ jobs:
       - id: action-npm-build
         name: npm install and build
         run: |
-          echo $PR_HEAD_REF
-          if [[ $PR_HEAD_REF != refs/heads/releases/* ]]; then
+          echo $PR_BASE_REF
+          if [[ $PR_BASE_REF != releases/* ]]; then
             npm install
             npm run build
           fi
