@@ -21,7 +21,7 @@ jobs:
       - id: action-npm-build
         name: npm install and build
         run: |
-          if [ $BRANCH_NAME != releases/* ]; then
+          if [[ $BRANCH_NAME != releases/* ]]; then
             npm install
             npm run build
           fi
