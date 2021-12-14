@@ -17,11 +17,14 @@ jobs:
           kubernetes version: "v1.17.8"
           driver: "none"
       - uses: actions/checkout@v1
+      - uses: nelonoel/branch-name@v1.0.1
       - id: action-npm-build
         name: npm install and build
         run: |
-          npm install
-          npm run build
+          if [ $BRANCH_NAME != releases/* ]; then
+            npm install
+            npm run build
+          fi
       - id: call-create-secret
         name: execute k8s-create-secret
         uses: ./
