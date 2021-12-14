@@ -24,8 +24,6 @@ bld/
 [Oo]bj/
 [Ll]og/
 
-# dependencies
-/node_modules
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
