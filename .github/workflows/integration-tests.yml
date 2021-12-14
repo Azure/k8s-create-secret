@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KUBECONFIG: /home/runner/.kube/config
+      PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
     steps:
       - id: setup-minikube
         name: Setup Minikube
@@ -17,11 +18,11 @@ jobs:
           kubernetes version: "v1.17.8"
           driver: "none"
       - uses: actions/checkout@v1
-      - uses: nelonoel/branch-name@v1.0.1
       - id: action-npm-build
         name: npm install and build
         run: |
-          if [[ $BRANCH_NAME != releases/* ]]; then
+          echo $PR_HEAD_REF
+          if [[ $PR_HEAD_REF != refs/heads/releases/* ]]; then
             npm install
             npm run build
           fi
