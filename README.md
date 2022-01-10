@@ -21,7 +21,7 @@ jobs:
       uses: azure/k8s-create-secret@v2
       with:
         namespace: 'myapp'
-        secret-type: 'docker-registry'
+        secret-type: 'kubernetes.io/dockerconfigjson'
         secret-name: 'contoso-cr'
         string-data: ${{ secrets.SECRET_STRING_DATA}}
       id: create-secret
