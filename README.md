@@ -37,7 +37,7 @@ jobs:
   example-job:    
     runs-on: ubuntu-latest
     steps: 
-    - uses: azure/k8s-create-secret@v1
+    - uses: azure/k8s-create-secret@v2
       with:
         namespace: 'default'
         secret-type: 'generic'
