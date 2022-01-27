@@ -334,3 +334,6 @@ ASALocalRun/
 # Nektos Act Local Debugging
 .secrets
 event.json
+
+# MacOS
+.DS_Store
