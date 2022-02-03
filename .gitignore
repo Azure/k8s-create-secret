@@ -337,3 +337,6 @@ event.json
 
 # MacOS
 .DS_Store
+
+# Transpiled JS
+lib/
