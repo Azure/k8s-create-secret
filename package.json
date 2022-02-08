@@ -4,7 +4,7 @@
     "private": true,
     "main": "lib/run.js",
     "scripts": {
-        "build": "tsc --outDir ./lib/ --rootDir ./src/",
+        "build": " ncc build src/run.ts -o lib",
         "test": "jest"
     },
     "keywords": [
@@ -24,6 +24,7 @@
         "@types/jest": "^25.2.3",
         "@types/node": "^12.0.4",
         "jest": "^26.0.1",
+        "ncc": "^0.3.6",
         "ts-jest": "^25.5.1",
         "typescript": "^3.9.2"
     }
