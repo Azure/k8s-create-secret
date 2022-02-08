@@ -2,7 +2,7 @@
     "name": "k8s-create-secret-action",
     "version": "2.0.0",
     "private": true,
-    "main": "lib/run.js",
+    "main": "lib/index.js",
     "scripts": {
         "build": "ncc build src/run.ts -o lib",
         "test": "jest"
