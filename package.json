@@ -2,9 +2,9 @@
     "name": "k8s-create-secret-action",
     "version": "2.0.0",
     "private": true,
-    "main": "lib/run.js",
+    "main": "lib/index.js",
     "scripts": {
-        "build": "tsc --outDir ./lib/ --rootDir ./src/",
+        "build": "ncc build src/run.ts -o lib",
         "test": "jest"
     },
     "keywords": [
@@ -23,6 +23,7 @@
     "devDependencies": {
         "@types/jest": "^25.2.3",
         "@types/node": "^12.0.4",
+        "@vercel/ncc": "^0.33.1",
         "jest": "^26.0.1",
         "ts-jest": "^25.5.1",
         "typescript": "^3.9.2"
