@@ -72,8 +72,8 @@ async function run() {
 
 
     const secret = await buildSecret(secretName, namespace)
-    const result = await api.createNamespacedSecret(namespace, secret)
-    core.debug(result?.response?.body?.metadata)
+    core.info('Creating secret')
+    await api.createNamespacedSecret(namespace, secret)
 }
 
 run().catch(core.setFailed);
