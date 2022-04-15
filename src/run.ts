@@ -72,16 +72,8 @@ async function run() {
 
 
     const secret = await buildSecret(secretName, namespace)
-    let result
-    try {
-        result = await api.createNamespacedSecret(namespace, secret)
-    } catch ({ response }) {
-        core.error(`Failed to create secret with statusCode: ${response?.statusCode}`)
-        core.error(response?.body)
-    }
-
-    const response = result?.response
-    core.debug(response?.body?.metadata)
+    core.info('Creating secret')
+    await api.createNamespacedSecret(namespace, secret)
 }
 
 run().catch(core.setFailed);
