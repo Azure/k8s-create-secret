@@ -39,16 +39,16 @@ export async function buildSecret(secretName: string, namespace: string): Promis
     // Check if any container registry credentials are provided
     if (containerRegistryURL || containerRegistryUserName || containerRegistryPassword || containerRegistryEmail) {
         if (!containerRegistryURL) {
-            core.error('container-registry-url is required when container-registry-username or container-registry-password is provided');
+            core.setFailed('container-registry-url is required when container-registry-username or container-registry-password is provided');
         }
         if (!containerRegistryUserName) {
-            core.error('container-registry-username is required when container-registry-url or container-registry-password is provided');
+            core.setFailed('container-registry-username is required when container-registry-url or container-registry-password is provided');
         }
         if (!containerRegistryPassword) {
-            core.error('container-registry-password is required when container-registry-url or container-registry-username or container-registry-email is provided');
+            core.setFailed('container-registry-password is required when container-registry-url or container-registry-username or container-registry-email is provided');
         }
         if (!containerRegistryEmail) {
-            core.error('container-registry-email is required when container-registry-url or container-registry-username or container-registry-password is provided');
+            core.setFailed('container-registry-email is required when container-registry-url or container-registry-username or container-registry-password is provided');
         }
 
         const dockerConfigJSON = buildContainerRegistryDockerConfigJSON(containerRegistryURL, containerRegistryUserName, containerRegistryPassword, containerRegistryEmail);
