@@ -21,9 +21,10 @@ jobs:
       uses: azure/k8s-create-secret@v2
       with:
         namespace: 'myapp'
-        secret-type: 'kubernetes.io/dockerconfigjson'
         secret-name: 'contoso-cr'
-        string-data: ${{ secrets.SECRET_STRING_DATA}}
+        container-registry-url: 'containerregistry.contoso.com'
+        container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
+        container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
       id: create-secret
 ```
 
@@ -45,7 +46,7 @@ jobs:
         data:  ${{ secrets.AZURE_STORAGE_ACCOUNT_DATA }}
 ```
 
-### Prerequisites
+### Alternative for Container Registry Secrets
 Get the username and password of your container registry and create secrets for them. For Azure Container registry refer to **admin [account document](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-authentication#admin-account)** for username and password.
 
 For creating docker-registery secrets, [kubectl can generate the JSON](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets)

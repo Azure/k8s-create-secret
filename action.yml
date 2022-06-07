@@ -6,12 +6,25 @@ inputs:
     description: "Choose the target Kubernetes namespace. If the namespace is not provided, the commands will run in the default namespace."
     required: false
   secret-type:
-    description: "Type of Kubernetes secret. For example, docker-registry or generic"
-    required: true
-    default: "docker-registry"
+    description: "Type of Kubernetes secret. Defaults to 'kubernetes.io/dockerconfigjson'."
+    required: false
+    default: "kubernetes.io/dockerconfigjson"
   secret-name:
     description: "Name of the secret. You can use this secret name in the Kubernetes YAML configuration file."
     required: true
+  container-registry-url:
+    description: "Container Registry URL"
+    required: false
+  container-registry-username:
+    description: "Container Registry user name"
+    required: false
+  container-registry-password:
+    description: "Container Registry password"
+    required: false
+  container-registry-email:
+    description: "Container Registry email (optional even when using url,username,password)"
+    required: false
+    default: " "
   string-data:
     description: 'JSON object with plaintext string data for secret ex: {"key1":"value1"}'
     required: false

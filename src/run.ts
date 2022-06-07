@@ -7,13 +7,64 @@ export function checkClusterContext() {
     }
 }
 
+export function buildContainerRegistryDockerConfigJSON(registryUrl: string, registryUserName: string, registryPassword: string, registryEmail) {
+    const authString = Buffer.from(`${registryUserName}:${registryPassword}`).toString('base64');
+    const dockerConfigJson = {
+        "auths": {
+            [registryUrl]: {
+                "username": registryUserName,
+                "password": registryPassword,
+                "email": registryEmail,
+                "auth": authString,
+            }
+        }
+    }
+    return Buffer.from(JSON.stringify(dockerConfigJson)).toString('base64');
+}
+
 export async function buildSecret(secretName: string, namespace: string): Promise<V1Secret> {
     // The secret type for the new secret
-    const secretType: string = core.getInput('secret-type', { required: true });
+    const secretType: string = core.getInput('secret-type');
 
     const metaData: V1ObjectMeta = {
         name: secretName,
         namespace: namespace
+    }
+
+    const containerRegistryURL = core.getInput('container-registry-url');
+    const containerRegistryUserName = core.getInput('container-registry-username');
+    const containerRegistryPassword = core.getInput('container-registry-password');
+    const containerRegistryEmail = core.getInput('container-registry-email');
+
+    // Check if any container registry credentials are provided
+    if (containerRegistryURL || containerRegistryUserName || containerRegistryPassword || containerRegistryEmail) {
+        if (!containerRegistryURL) {
+            core.warning('container-registry-url is required when container-registry-username or container-registry-password is provided');
+        }
+        if (!containerRegistryUserName) {
+            core.warning('container-registry-username is required when container-registry-url or container-registry-password is provided');
+        }
+        if (!containerRegistryPassword) {
+            core.warning('container-registry-password is required when container-registry-url or container-registry-username is provided');
+        }
+        if (!containerRegistryEmail) {
+            core.warning('container-registry-email is required when container-registry-url or container-registry-username or container-registry-password is provided');
+        }
+
+        const dockerConfigJSON = buildContainerRegistryDockerConfigJSON(containerRegistryURL, containerRegistryUserName, containerRegistryPassword, containerRegistryEmail);
+        const dockerConfigBase64 = Buffer.from(dockerConfigJSON).toString('base64');
+
+        const data = {
+            ".dockerconfigjson": dockerConfigBase64
+        }
+
+        return {
+            apiVersion: "v1",
+            kind: "Secret",
+            metadata: metaData,
+            type: secretType,
+            data: data
+        }
     }
 
     // The serialized form of the secret data is a base64 encoded string
