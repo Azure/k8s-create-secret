@@ -121,7 +121,13 @@ async function run() {
 
     const secret = await buildSecret(secretName, namespace)
     core.info('Creating secret')
-    await api.createNamespacedSecret(namespace, secret)
+    try {
+        await api.createNamespacedSecret(namespace, secret)
+    } catch (err) {
+        core.info(err)
+        core.setFailed(err.message)
+    }
+
 }
 
 run().catch(core.setFailed);
