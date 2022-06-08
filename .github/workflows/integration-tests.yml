@@ -82,8 +82,8 @@ jobs:
       - id: validate-secret-value-equality
         name: validate secret value equality
         run: |
-          export KUBECTLVALUE="$(kubectl get secret kubectl-test-secret --template {{.data.testKey}})"
-          export ACTIONVALUE="$(kubectl get secret action-test-secret --template {{.data.testKey}})"
+          export KUBECTLVALUE="$(kubectl get secret kubectl-test-secret --template {{.data}})"
+          export ACTIONVALUE="$(kubectl get secret action-test-secret --template {{.data}})"
           echo "ACTIONVALUE=$ACTIONVALUE"
           echo "KUBECTLVALUE=$KUBECTLVALUE"
           if [ "$ACTIONVALUE" = "$KUBECTLVALUE" ]; then

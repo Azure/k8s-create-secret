@@ -13,5 +13,5 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: |
-          npm install
+          npm install --legacy-peer-deps
           npm test
