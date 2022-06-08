@@ -79,16 +79,29 @@ jobs:
         name: create test secret with kubectl
         run: |
           kubectl create secret docker-registry kubectl-test-secret --docker-username=test-User1 --docker-password=test-Pass1 --docker-server=test.registry.com
-      - id: validate-secret-parity
-        name: validate secret creation
+      - id: validate-secret-value-equality
+        name: validate secret value equality
         run: |
           export KUBECTLVALUE="$(kubectl get secret kubectl-test-secret --template {{.data.testKey}})"
           export ACTIONVALUE="$(kubectl get secret action-test-secret --template {{.data.testKey}})"
+          echo "ACTIONVALUE=$ACTIONVALUE"
+          echo "KUBECTLVALUE=$KUBECTLVALUE"
           if [ "$ACTIONVALUE" = "$KUBECTLVALUE" ]; then
             echo "secret values match"
           else
             echo "action-created secret value does not match kubectl-created secret"
-            echo "ACTIONVALUE=$ACTIONVALUE"
-            echo "KUBECTLVALUE=$KUBECTLVALUE"
+            exit 1
+          fi
+      - id: validate-secret-type-equality
+        name: validate secret type equality
+        run: |
+          export KUBECTLTYPE="$(kubectl get secret kubectl-test-secret --template {{.type}})"
+          export ACTIONTYPE="$(kubectl get secret action-test-secret --template {{.type}})"
+          echo "ACTIONTYPE=$ACTIONTYPE"
+          echo "KUBECTLTYPE=$KUBECTLTYPE"
+          if [ "$ACTIONTYPE" = "$KUBECTLTYPE" ]; then
+            echo "secret types match"
+          else
+            echo "action-created secret type does not match kubectl-created secret type"
             exit 1
           fi
