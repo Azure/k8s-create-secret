@@ -124,7 +124,7 @@ async function run() {
     try {
         await api.createNamespacedSecret(namespace, secret)
     } catch (err) {
-        core.info(err)
+        core.info(JSON.stringify(err))
         core.setFailed(err.message)
     }
 
