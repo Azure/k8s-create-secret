@@ -61,7 +61,9 @@ describe("buildContainerRegistryDockerConfigJSON", () => {
         const testContainerRegistryPassword = 'test-container-registry-password'
         const testContainerRegistryEmail = 'test-container-registry-email'
 
+        const exptectedDockerConfigJson = `{"auths":{"test-container-registry-url":{"username":"test-container-registry-username","password":"test-container-registry-password","email":"test-container-registry-email","auth":"dGVzdC1jb250YWluZXItcmVnaXN0cnktdXNlcm5hbWU6dGVzdC1jb250YWluZXItcmVnaXN0cnktcGFzc3dvcmQ="}}}`
+
         const dockerConfigJson = buildContainerRegistryDockerConfigJSON(testContainerRegistryUrl, testContainerRegistryUserName, testContainerRegistryPassword, testContainerRegistryEmail)
-        expect(dockerConfigJson).toEqual(`eyJhdXRocyI6eyJ0ZXN0LWNvbnRhaW5lci1yZWdpc3RyeS11cmwiOnsidXNlcm5hbWUiOiJ0ZXN0LWNvbnRhaW5lci1yZWdpc3RyeS11c2VybmFtZSIsInBhc3N3b3JkIjoidGVzdC1jb250YWluZXItcmVnaXN0cnktcGFzc3dvcmQiLCJlbWFpbCI6InRlc3QtY29udGFpbmVyLXJlZ2lzdHJ5LWVtYWlsIiwiYXV0aCI6ImRHVnpkQzFqYjI1MFlXbHVaWEl0Y21WbmFYTjBjbmt0ZFhObGNtNWhiV1U2ZEdWemRDMWpiMjUwWVdsdVpYSXRjbVZuYVhOMGNua3RjR0Z6YzNkdmNtUT0ifX19`)
+        expect(dockerConfigJson).toEqual(exptectedDockerConfigJson)
     })
 })
