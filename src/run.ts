@@ -47,9 +47,6 @@ export async function buildSecret(secretName: string, namespace: string): Promis
         if (!containerRegistryPassword) {
             core.setFailed('container-registry-password is required when container-registry-url or container-registry-username or container-registry-email is provided');
         }
-        if (!containerRegistryEmail) {
-            core.setFailed('container-registry-email is required when container-registry-url or container-registry-username or container-registry-password is provided');
-        }
 
         const dockerConfigJSON = buildContainerRegistryDockerConfigJSON(containerRegistryURL, containerRegistryUserName, containerRegistryPassword, containerRegistryEmail);
         const dockerConfigBase64 = Buffer.from(dockerConfigJSON).toString('base64');
