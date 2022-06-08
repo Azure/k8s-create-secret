@@ -1,4 +1,4 @@
-name: "Minikube Integration tests"
+name: "Minikube Integration Tests"
 on:
   pull_request:
 
