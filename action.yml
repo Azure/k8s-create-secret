@@ -24,7 +24,6 @@ inputs:
   container-registry-email:
     description: "Container Registry email (optional even when using url,username,password)"
     required: false
-    default: " "
   string-data:
     description: 'JSON object with plaintext string data for secret ex: {"key1":"value1"}'
     required: false
