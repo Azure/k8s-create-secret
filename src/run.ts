@@ -19,7 +19,7 @@ export function buildContainerRegistryDockerConfigJSON(registryUrl: string, regi
             }
         }
     }
-    return Buffer.from(JSON.stringify(dockerConfigJson)).toString('base64');
+    return JSON.stringify(dockerConfigJson);//Buffer.from(JSON.stringify(dockerConfigJson)).toString('base64');
 }
 
 export async function buildSecret(secretName: string, namespace: string): Promise<V1Secret> {

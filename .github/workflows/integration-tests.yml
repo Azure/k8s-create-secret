@@ -1,10 +1,10 @@
-name: "Trigger Integration tests"
+name: "Minikube Integration tests"
 on:
   pull_request:
 
 jobs:
   aks-minikube-integration-tests:
-    name: Minikube Integration Tests
+    name: Generic Secret Validation
     runs-on: ubuntu-latest
     env:
       KUBECONFIG: /home/runner/.kube/config
@@ -45,7 +45,7 @@ jobs:
             exit 1
           fi
   aks-minikube-docker-registry-tests:
-    name: Minikube Docker Registry Secret Tests
+    name: Registry Secret Kubectl Validation
     runs-on: ubuntu-latest
     env:
       KUBECONFIG: /home/runner/.kube/config
