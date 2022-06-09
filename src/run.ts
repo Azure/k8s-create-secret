@@ -7,19 +7,33 @@ export function checkClusterContext() {
     }
 }
 
-export function buildContainerRegistryDockerConfigJSON(registryUrl: string, registryUserName: string, registryPassword: string, registryEmail) {
+export type DockerConfigJSON = {
+    auths: {
+        [key: string]: {
+            username: string;
+            password: string;
+            email?: string;
+            auth: string;
+        };
+    };
+};
+
+export function buildContainerRegistryDockerConfigJSON(registryUrl: string, registryUserName: string, registryPassword: string, registryEmail): DockerConfigJSON {
     const authString = Buffer.from(`${registryUserName}:${registryPassword}`).toString('base64');
-    const dockerConfigJson = {
+    const dockerConfigJson: DockerConfigJSON = {
         "auths": {
             [registryUrl]: {
                 "username": registryUserName,
                 "password": registryPassword,
-                "email": registryEmail,
                 "auth": authString,
             }
         }
     }
-    return JSON.stringify(dockerConfigJson);//Buffer.from(JSON.stringify(dockerConfigJson)).toString('base64');
+
+    if (registryEmail) {
+        dockerConfigJson.auths[registryUrl].email = registryEmail
+    }
+    return dockerConfigJson//Buffer.from(JSON.stringify(dockerConfigJson)).toString('base64');
 }
 
 export async function buildSecret(secretName: string, namespace: string): Promise<V1Secret> {
@@ -49,7 +63,8 @@ export async function buildSecret(secretName: string, namespace: string): Promis
         }
 
         const dockerConfigJSON = buildContainerRegistryDockerConfigJSON(containerRegistryURL, containerRegistryUserName, containerRegistryPassword, containerRegistryEmail);
-        const dockerConfigBase64 = Buffer.from(dockerConfigJSON).toString('base64');
+        const dockerConfigJSONString = JSON.stringify(dockerConfigJSON);
+        const dockerConfigBase64 = Buffer.from(dockerConfigJSONString).toString('base64');
 
         const data = {
             ".dockerconfigjson": dockerConfigBase64

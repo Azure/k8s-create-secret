@@ -23,7 +23,7 @@ jobs:
         run: |
           echo $PR_BASE_REF
           if [[ $PR_BASE_REF != releases/* ]]; then
-            npm install
+            npm install --legacy-peer-deps
             npm run build
           fi
       - id: call-create-secret
