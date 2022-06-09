@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - run: |
+      - name: npm install
+        id: npm-install
+        run: |
           npm install --legacy-peer-deps
+      - name: Run npm test
+        id: npm-test
+        run: |
           npm test
