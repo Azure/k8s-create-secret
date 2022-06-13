@@ -1,4 +1,4 @@
-name: "Run unit tests"
+name: "Unit Tests"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -8,10 +8,15 @@ on: # rebuild any PRs and main branch changes
 
 jobs:
   build: # make sure build/ci works properly
-    name: npm test
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - run: |
+      - name: npm install
+        id: npm-install
+        run: |
           npm install
+      - name: Run npm test
+        id: npm-test
+        run: |
           npm test
