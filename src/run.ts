@@ -131,7 +131,7 @@ async function run() {
         core.warning(response?.body?.metadata)
     }
     core.info('Deleting secret:')
-    core.info(deleteSecretResponse?.response?.body)
+    core.info(JSON.stringify(deleteSecretResponse?.response?.body, undefined, 2))
 
 
     const secret = await buildSecret(secretName, namespace)
