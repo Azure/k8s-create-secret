@@ -1,41 +1,41 @@
-name: "Create secret in Kubernetes cluster"
-description: "Create a generic secret or docker-registry secret in a Kubernetes such as Azure Kubernetes Service (AKS) clusters"
+name: 'Create secret in Kubernetes cluster'
+description: 'Create a generic secret or docker-registry secret in a Kubernetes such as Azure Kubernetes Service (AKS) clusters'
 inputs:
-  # Please ensure you have used either azure/k8s-actions/aks-set-context or azure/k8s-actions/k8s-set-context in the workflow before this action
-  namespace:
-    description: "Choose the target Kubernetes namespace. If the namespace is not provided, the commands will run in the default namespace."
-    required: false
-  secret-type:
-    description: "Type of Kubernetes secret. Defaults to 'kubernetes.io/dockerconfigjson'."
-    required: false
-    default: "kubernetes.io/dockerconfigjson"
-  secret-name:
-    description: "Name of the secret. You can use this secret name in the Kubernetes YAML configuration file."
-    required: true
-  container-registry-url:
-    description: "Container Registry URL"
-    required: false
-  container-registry-username:
-    description: "Container Registry user name"
-    required: false
-  container-registry-password:
-    description: "Container Registry password"
-    required: false
-  container-registry-email:
-    description: "Container Registry email (optional even when using url,username,password)"
-    required: false
-  string-data:
-    description: 'JSON object with plaintext string data for secret ex: {"key1":"value1"}'
-    required: false
-  data:
-    description: 'JSON object with the serialized form of the secret data in a base64 encoded string ex: {"key1":"[base64 encoded data]"}'
-    required: false
+   # Please ensure you have used either azure/k8s-actions/aks-set-context or azure/k8s-actions/k8s-set-context in the workflow before this action
+   namespace:
+      description: 'Choose the target Kubernetes namespace. If the namespace is not provided, the commands will run in the default namespace.'
+      required: false
+   secret-type:
+      description: "Type of Kubernetes secret. Defaults to 'kubernetes.io/dockerconfigjson'."
+      required: false
+      default: 'kubernetes.io/dockerconfigjson'
+   secret-name:
+      description: 'Name of the secret. You can use this secret name in the Kubernetes YAML configuration file.'
+      required: true
+   container-registry-url:
+      description: 'Container Registry URL'
+      required: false
+   container-registry-username:
+      description: 'Container Registry user name'
+      required: false
+   container-registry-password:
+      description: 'Container Registry password'
+      required: false
+   container-registry-email:
+      description: 'Container Registry email (optional even when using url,username,password)'
+      required: false
+   string-data:
+      description: 'JSON object with plaintext string data for secret ex: {"key1":"value1"}'
+      required: false
+   data:
+      description: 'JSON object with the serialized form of the secret data in a base64 encoded string ex: {"key1":"[base64 encoded data]"}'
+      required: false
 outputs:
-  secret-name:
-    description: "Secret name"
+   secret-name:
+      description: 'Secret name'
 branding:
-  icon: "k8s.svg" # vector art to display in the GitHub Marketplace
-  color: "blue" # optional, decorates the entry in the GitHub Marketplace
+   icon: 'k8s.svg' # vector art to display in the GitHub Marketplace
+   color: 'blue' # optional, decorates the entry in the GitHub Marketplace
 runs:
-  using: "node16"
-  main: "lib/index.js"
+   using: 'node16'
+   main: 'lib/index.js'
