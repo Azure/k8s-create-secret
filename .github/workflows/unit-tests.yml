@@ -1,22 +1,22 @@
-name: "Unit Tests"
+name: 'Unit Tests'
 on: # rebuild any PRs and main branch changes
-  pull_request:
-  push:
-    branches:
-      - main
-      - "releases/*"
+   pull_request:
+   push:
+      branches:
+         - main
+         - 'releases/*'
 
 jobs:
-  build: # make sure build/ci works properly
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: npm install
-        id: npm-install
-        run: |
-          npm install
-      - name: Run npm test
-        id: npm-test
-        run: |
-          npm test
+   build: # make sure build/ci works properly
+      name: Run Unit Tests
+      runs-on: ubuntu-latest
+      steps:
+         - uses: actions/checkout@v1
+         - name: npm install
+           id: npm-install
+           run: |
+              npm install
+         - name: Run npm test
+           id: npm-test
+           run: |
+              npm test
