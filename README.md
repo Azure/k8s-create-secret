@@ -20,7 +20,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
          - name: Set imagePullSecret
-           uses: azure/k8s-create-secret@v2
+           uses: azure/k8s-create-secret@v4
            with:
               namespace: 'myapp'
               secret-name: 'contoso-cr'
