@@ -1,0 +1,30 @@
+# Documentation for branch policy: https://aka.ms/gim/docs/policy/branch-protection
+
+name: Default branch protection policy
+description: Requires two reviewers for protected branches
+resource: repository
+where: 
+configuration:
+  branchProtectionRules:
+    - branchNamePattern: "main"
+      requiredApprovingReviewsCount: 2
+      dismissStaleReviews: true
+      requireCodeOwnersReview: true
+      isAdminEnforced: false
+      requiresCommitSignatures: true
+      requiresLinearHistory: true
+      allowsForcePushes: false
+      allowsDeletions: false
+      restrictsPushes: false
+      requiresConversationResolution: true
+    - branchNamePattern: "releases/*"
+      requiredApprovingReviewsCount: 2
+      dismissStaleReviews: false
+      requireCodeOwnersReview: false
+      isAdminEnforced: false
+      requiresCommitSignatures: false
+      requiresLinearHistory: false
+      allowsForcePushes: false
+      allowsDeletions: false
+      restrictsPushes: false
+      requiresConversationResolution: true
