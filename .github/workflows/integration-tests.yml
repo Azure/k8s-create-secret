@@ -12,11 +12,12 @@ jobs:
       steps:
          - id: setup-minikube
            name: Setup Minikube
-           uses: medyagh/setup-minikube@ab221dee176f8eabd8deddf849b5bf1d6244a6e8
+           uses: medyagh/setup-minikube@latest
            with:
-              minikube-version: 'v1.24.0'
-              kubernetes-version: 'v1.17.8'
+              minikube-version: 1.24.0
+              kubernetes-version: 1.22.3
               driver: 'none'
+           timeout-minutes: 3
          - uses: actions/checkout@v1
          - id: action-npm-build
            name: npm install and build
