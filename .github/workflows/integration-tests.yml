@@ -10,13 +10,16 @@ jobs:
          KUBECONFIG: /home/runner/.kube/config
          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
       steps:
+         - name: Install conntrack
+           run: sudo apt-get install -y conntrack
          - id: setup-minikube
            name: Setup Minikube
-           uses: manusa/actions-setup-minikube@v2.4.2
+           uses: medyagh/setup-minikube@latest
            with:
-              minikube version: 'v1.24.0'
-              kubernetes version: 'v1.17.8'
+              minikube-version: 1.24.0
+              kubernetes-version: 1.22.3
               driver: 'none'
+           timeout-minutes: 3
          - uses: actions/checkout@v1
          - id: action-npm-build
            name: npm install and build
@@ -51,13 +54,16 @@ jobs:
          KUBECONFIG: /home/runner/.kube/config
          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
       steps:
+         - name: Install conntrack
+           run: sudo apt-get install -y conntrack
          - id: setup-minikube
            name: Setup Minikube
-           uses: manusa/actions-setup-minikube@v2.4.2
+           uses: medyagh/setup-minikube@latest
            with:
-              minikube version: 'v1.24.0'
-              kubernetes version: 'v1.17.8'
+              minikube-version: 1.24.0
+              kubernetes-version: 1.22.3
               driver: 'none'
+           timeout-minutes: 3
          - uses: actions/checkout@v1
          - id: action-npm-build
            name: npm install and build
