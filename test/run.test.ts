@@ -4,8 +4,6 @@ import * as path from 'path'
 
 import * as core from '@actions/core'
 
-import {mocked} from 'ts-jest/utils'
-
 const k8s = require('@kubernetes/client-node')
 
 import {
@@ -22,10 +20,10 @@ import {
    DockerConfigJSON
 } from '../src/run'
 
-const mockk8s = mocked(k8s, true)
-const mockApi = mocked(CoreV1Api, true)
+const mockk8s = jest.mocked(k8s, {shallow: true})
+const mockApi = jest.mocked(CoreV1Api, {shallow: true})
 
-const fileUtility = mocked(fs, true)
+const fileUtility = jest.mocked(fs, {shallow: true})
 
 beforeAll(() => {
    process.env['RUNNER_TEMP'] = '/home/runner/work/_temp'
