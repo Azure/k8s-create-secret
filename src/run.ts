@@ -164,9 +164,10 @@ async function run() {
    // Delete if exists
    let deleteSecretResponse
    try {
-      deleteSecretResponse = await api.deleteNamespacedSecret(
-         secretName,
-         namespace
+      deleteSecretResponse = await api.deleteNamespacedSecret({
+         name: secretName,
+         namespace: namespace,
+      }
       )
    } catch ({response}) {
       core.warning(
@@ -180,7 +181,10 @@ async function run() {
    const secret = await buildSecret(secretName, namespace)
    core.info('Creating secret')
    try {
-      await api.createNamespacedSecret(namespace, secret)
+      await api.createNamespacedSecret({
+         namespace: namespace,
+         body: secret
+      });
    } catch (err) {
       core.info(JSON.stringify(err))
       core.setFailed(err.message)
