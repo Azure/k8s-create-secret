@@ -166,9 +166,8 @@ async function run() {
    try {
       deleteSecretResponse = await api.deleteNamespacedSecret({
          name: secretName,
-         namespace: namespace,
-      }
-      )
+         namespace: namespace
+      })
    } catch ({response}) {
       core.warning(
          `Failed to delete secret with statusCode: ${response?.statusCode}`
@@ -184,7 +183,7 @@ async function run() {
       await api.createNamespacedSecret({
          namespace: namespace,
          body: secret
-      });
+      })
    } catch (err) {
       core.info(JSON.stringify(err))
       core.setFailed(err.message)
