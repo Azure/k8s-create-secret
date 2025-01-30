@@ -9,7 +9,7 @@ module.exports = {
    transformIgnorePatterns: ['/node_modules/(?!@kubernetes/client-node/)'],
    moduleNameMapper: {
       '^@kubernetes/client-node$':
-         '/home/jostupka/dev/work/k8s-create-secret/node_modules/@kubernetes/client-node/dist/index.d.ts'
+         '<rootDir>/node_modules/@kubernetes/client-node/dist/index.d.ts'
    },
    verbose: true
 }
