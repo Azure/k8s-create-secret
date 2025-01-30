@@ -147,7 +147,7 @@ export async function buildSecret(
    return secret
 }
 
-async function run() {
+export async function run() {
    checkClusterContext()
 
    // Create kubeconfig and load values from 'KUBECONFIG' environment variable
@@ -193,5 +193,3 @@ async function run() {
       core.setFailed(err.message)
    }
 }
-
-run().catch(core.setFailed)

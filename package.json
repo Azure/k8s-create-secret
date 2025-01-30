@@ -5,7 +5,7 @@
    "main": "lib/index.js",
    "scripts": {
       "prebuild": "npm i @vercel/ncc",
-      "build": "ncc build src/run.ts -o lib",
+      "build": "ncc build src/index.ts -o lib",
       "test": "jest",
       "format": "prettier --write .",
       "format-check": "prettier --check ."
