@@ -5,7 +5,7 @@ on:
 jobs:
    aks-minikube-integration-tests:
       name: Generic Secret Validation
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-22.04
       env:
          KUBECONFIG: /home/runner/.kube/config
          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
@@ -14,7 +14,7 @@ jobs:
            run: sudo apt-get install -y conntrack
          - id: setup-minikube
            name: Setup Minikube
-           uses: medyagh/setup-minikube@latest
+           uses: medyagh/setup-minikube@0da844c8015a627c36d8ecc75167303eb112d112
            with:
               minikube-version: 1.24.0
               kubernetes-version: 1.22.3
