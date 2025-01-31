@@ -1,7 +1,5 @@
 import * as core from '@actions/core'
 import {
-   CoreV1ApiCreateNamespacedSecretRequest,
-   CoreV1ApiDeleteNamespacedSecretRequest,
    CoreV1Api,
    KubeConfig,
    V1ObjectMeta,
@@ -147,7 +145,7 @@ export async function buildSecret(
    return secret
 }
 
-export async function run() {
+async function run() {
    checkClusterContext()
 
    // Create kubeconfig and load values from 'KUBECONFIG' environment variable
@@ -166,11 +164,10 @@ export async function run() {
    // Delete if exists
    let deleteSecretResponse
    try {
-      let deleteRequest: CoreV1ApiDeleteNamespacedSecretRequest = {
-         name: secretName,
-         namespace: namespace
-      }
-      deleteSecretResponse = await api.deleteNamespacedSecret(deleteRequest)
+      deleteSecretResponse = await api.deleteNamespacedSecret(
+         secretName,
+         namespace
+      )
    } catch ({response}) {
       core.warning(
          `Failed to delete secret with statusCode: ${response?.statusCode}`
@@ -183,13 +180,11 @@ export async function run() {
    const secret = await buildSecret(secretName, namespace)
    core.info('Creating secret')
    try {
-      let secretRequest: CoreV1ApiCreateNamespacedSecretRequest = {
-         namespace: namespace,
-         body: secret
-      }
-      await api.createNamespacedSecret(secretRequest)
+      await api.createNamespacedSecret(namespace, secret)
    } catch (err) {
       core.info(JSON.stringify(err))
       core.setFailed(err.message)
    }
 }
+
+run().catch(core.setFailed)
