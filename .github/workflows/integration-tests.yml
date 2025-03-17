@@ -14,7 +14,7 @@ jobs:
            run: sudo apt-get install -y conntrack
          - id: setup-minikube
            name: Setup Minikube
-           uses: medyagh/setup-minikube@33004e09c0ee1c769f4f6d435ae4098ebb2b8f9d
+           uses: medyagh/setup-minikube@3fa06c2257eb48a3ca8e24fedece59ee2479255a
            with:
               minikube-version: 1.24.0
               kubernetes-version: 1.22.3
