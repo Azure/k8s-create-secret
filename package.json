@@ -23,15 +23,15 @@
       "@actions/tool-cache": "^2.0.2",
       "@babel/core": "^7.26.10",
       "@babel/preset-env": "^7.26.9",
-      "@kubernetes/client-node": "^1.1.0"
+      "@kubernetes/client-node": "^1.1.1"
    },
    "devDependencies": {
       "@types/jest": "^29.5.14",
-      "@types/node": "^22.13.14",
+      "@types/node": "^22.14.0",
       "@vercel/ncc": "^0.38.3",
       "jest": "^29.7.0",
       "prettier": "^3.5.3",
       "ts-jest": "^29.3.1",
-      "typescript": "^5.8.2"
+      "typescript": "^5.8.3"
    }
 }
