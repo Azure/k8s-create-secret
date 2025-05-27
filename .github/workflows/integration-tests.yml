@@ -16,8 +16,8 @@ jobs:
            name: Setup Minikube
            uses: medyagh/setup-minikube@eb5a06d15a2502ea93809d0b99278aa6de6898fa
            with:
-              minikube-version: 1.24.0
-              kubernetes-version: 1.22.3
+              minikube-version: 1.33.0
+              kubernetes-version: 1.29.1
               driver: 'none'
            timeout-minutes: 3
          - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -60,8 +60,8 @@ jobs:
            name: Setup Minikube
            uses: medyagh/setup-minikube@latest
            with:
-              minikube-version: 1.24.0
-              kubernetes-version: 1.22.3
+              minikube-version: 1.33.0
+              kubernetes-version: 1.29.1
               driver: 'none'
            timeout-minutes: 3
          - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
