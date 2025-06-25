@@ -57,7 +57,29 @@ export async function buildSecret(
    namespace: string
 ): Promise<V1Secret> {
    // The secret type for the new secret
-   const secretType: string = core.getInput('secret-type')
+   const inputSecretType = core.getInput('secret-type')?.toLowerCase()
+
+let secretType: string
+switch (inputSecretType) {
+   case 'dockerconfigjson':
+      secretType = 'kubernetes.io/dockerconfigjson'
+      break
+   case 'tls':
+      secretType = 'kubernetes.io/tls'
+      break
+   case 'basic-auth':
+      secretType = 'kubernetes.io/basic-auth'
+      break
+   case 'ssh-auth':
+      secretType = 'kubernetes.io/ssh-auth'
+      break
+   case 'bootstrap-token':
+      secretType = 'bootstrap.kubernetes.io/token'
+      break
+   case 'generic':
+   default:
+      secretType = 'Opaque'
+}
 
    const metaData: V1ObjectMeta = {
       name: secretName,
