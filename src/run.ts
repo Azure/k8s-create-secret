@@ -148,7 +148,8 @@ export async function buildSecret(
 }
 function mapSecretType(inputType: string): string {
    const t = inputType.toLowerCase().trim()
-   if (t === 'generic' || t === 'opaque') return 'Opaque'
+   const K8S_SECRET_TYPE_OPAQUE = 'Opaque'
+   if (t === 'generic' || t === 'opaque') return K8S_SECRET_TYPE_OPAQUE
    return inputType
 }
 
