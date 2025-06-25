@@ -57,7 +57,7 @@ export async function buildSecret(
    namespace: string
 ): Promise<V1Secret> {
    // The secret type for the new secret
-   const secretType: string = core.getInput('secret-type')
+   const secretType: string = mapSecretType(core.getInput('secret-type'))
 
    const metaData: V1ObjectMeta = {
       name: secretName,
@@ -145,6 +145,11 @@ export async function buildSecret(
    }
 
    return secret
+}
+function mapSecretType(inputType: string): string {
+   const t = inputType.toLowerCase().trim()
+   if (t === 'generic' || t === 'opaque') return 'Opaque'
+   return inputType
 }
 
 export async function run() {
