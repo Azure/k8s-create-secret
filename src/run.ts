@@ -54,11 +54,9 @@ export function buildContainerRegistryDockerConfigJSON(
 
 export async function buildSecret(
    secretName: string,
-   namespace: string
+   namespace: string,
+   secretType: string
 ): Promise<V1Secret> {
-   // The secret type for the new secret
-   const secretType: string = mapSecretType(core.getInput('secret-type'))
-
    const metaData: V1ObjectMeta = {
       name: secretName,
       namespace: namespace
@@ -148,13 +146,12 @@ export async function buildSecret(
 }
 const K8S_SECRET_TYPE_OPAQUE = 'Opaque' // Kubernetes secret type for generic secrets
 const SECRET_TYPE_GENERIC = 'generic'
-const SECRET_TYPE_OPAQUE = 'opaque'
 
 function mapSecretType(inputType: string): string {
    const normalizedType = inputType.toLowerCase().trim()
    if (
       normalizedType === SECRET_TYPE_GENERIC ||
-      normalizedType === SECRET_TYPE_OPAQUE
+      normalizedType === K8S_SECRET_TYPE_OPAQUE.toLowerCase()
    ) {
       return K8S_SECRET_TYPE_OPAQUE
    }
@@ -177,6 +174,9 @@ export async function run() {
    // The namespace in which to place the secret
    const namespace: string = core.getInput('namespace') || 'default'
 
+   // The secret type for the new secret
+   const secretType: string = mapSecretType(core.getInput('secret-type'))
+
    // Delete if exists
    let deleteSecretResponse
    try {
@@ -194,7 +194,7 @@ export async function run() {
    core.info('Deleting secret:')
    core.info(JSON.stringify(deleteSecretResponse?.response?.body, undefined, 2))
 
-   const secret = await buildSecret(secretName, namespace)
+   const secret = await buildSecret(secretName, namespace, secretType)
    core.info('Creating secret')
    try {
       let secretRequest: CoreV1ApiCreateNamespacedSecretRequest = {
