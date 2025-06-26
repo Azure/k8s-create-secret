@@ -45,19 +45,19 @@ describe('buildSecret', () => {
       process.env['INPUT_SECRET-TYPE'] = 'generic'
    })
    it('should use api v1', async () => {
-      let secret = await buildSecret('test-secret', 'test-namespace')
+      let secret = await buildSecret('test-secret', 'test-namespace', 'generic')
       expect(secret.apiVersion).toBe('v1')
    })
 
    it('should have namespace in metadata field', async () => {
       const testNamespace = 'test-namespace'
-      let secret = await buildSecret('test-secret', testNamespace)
+      let secret = await buildSecret('test-secret', testNamespace, 'generic')
       expect(secret.metadata.namespace).toBe(testNamespace)
    })
    it('should have name in metadata field', async () => {
       const testNamespace = 'test-namespace'
       const testName = 'test-secret'
-      let secret = await buildSecret(testName, testNamespace)
+      let secret = await buildSecret(testName, testNamespace, 'generic')
       expect(secret.metadata.name).toBe(testName)
    })
 })

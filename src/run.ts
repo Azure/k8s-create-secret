@@ -54,7 +54,7 @@ export function buildContainerRegistryDockerConfigJSON(
 
 export async function buildSecret(
    secretName: string,
-   namespace: string,
+   namespace: string
    secretType: string
 ): Promise<V1Secret> {
    const metaData: V1ObjectMeta = {
@@ -171,11 +171,15 @@ export async function run() {
    // The name of the new secret
    const secretName: string = core.getInput('secret-name', {required: true})
 
+   // Get the raw input from the workflow YAML (may include casing or whitespace issues)
+   const rawSecretType = core.getInput('secret-type')
+
+   // Normalize and map the raw input to a valid Kubernetes secret type
+   const secretType = mapSecretType(rawSecretType)
+
+
    // The namespace in which to place the secret
    const namespace: string = core.getInput('namespace') || 'default'
-
-   // The secret type for the new secret
-   const secretType: string = mapSecretType(core.getInput('secret-type'))
 
    // Delete if exists
    let deleteSecretResponse
