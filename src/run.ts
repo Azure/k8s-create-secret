@@ -146,10 +146,15 @@ export async function buildSecret(
 
    return secret
 }
+const K8S_SECRET_TYPE_OPAQUE = 'Opaque'  // Kubernetes secret type for generic secrets
+const SECRET_TYPE_GENERIC = 'generic'
+const SECRET_TYPE_OPAQUE = 'opaque'
+
 function mapSecretType(inputType: string): string {
-   const t = inputType.toLowerCase().trim()
-   const K8S_SECRET_TYPE_OPAQUE = 'Opaque'
-   if (t === 'generic' || t === 'opaque') return K8S_SECRET_TYPE_OPAQUE
+   const normalizedType = inputType.toLowerCase().trim()
+   if (normalizedType === SECRET_TYPE_GENERIC || normalizedType === SECRET_TYPE_OPAQUE) {
+      return K8S_SECRET_TYPE_OPAQUE
+   }
    return inputType
 }
 
