@@ -54,7 +54,7 @@ export function buildContainerRegistryDockerConfigJSON(
 
 export async function buildSecret(
    secretName: string,
-   namespace: string
+   namespace: string,
    secretType: string
 ): Promise<V1Secret> {
    const metaData: V1ObjectMeta = {
@@ -176,7 +176,6 @@ export async function run() {
 
    // Normalize and map the raw input to a valid Kubernetes secret type
    const secretType = mapSecretType(rawSecretType)
-
 
    // The namespace in which to place the secret
    const namespace: string = core.getInput('namespace') || 'default'
