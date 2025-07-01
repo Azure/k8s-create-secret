@@ -117,11 +117,11 @@ export async function buildSecret(
          data: data
       }
    }
-    if (secretType === 'kubernetes.io/tls') {
-       const tlsCert = core.getInput('tls-cert')
-       const tlsKey  = core.getInput('tls-key')
-       const data    = buildTlsSecretData(tlsCert, tlsKey)
-       return {
+   if (secretType === 'kubernetes.io/tls') {
+      const tlsCert = core.getInput('tls-cert')
+      const tlsKey = core.getInput('tls-key')
+      const data = buildTlsSecretData(tlsCert, tlsKey)
+      return {
          apiVersion: 'v1',
          kind: 'Secret',
          metadata: metaData,
@@ -167,16 +167,18 @@ function mapSecretType(inputType: string): string {
    ) {
       return K8S_SECRET_TYPE_OPAQUE
    }
-    if (normalizedType === 'tls' || normalizedType === 'kubernetes.io/tls') {
+   if (normalizedType === 'tls' || normalizedType === 'kubernetes.io/tls') {
       return 'kubernetes.io/tls'
    }
    return inputType
 }
 function buildTlsSecretData(cert: string, key: string) {
-  if (!cert || !key) {
-    throw new Error('Both tls-cert and tls-key must be provided for type kubernetes.io/tls');
-  }
-  return { 'tls.crt': cert, 'tls.key': key };
+   if (!cert || !key) {
+      throw new Error(
+         'Both tls-cert and tls-key must be provided for type kubernetes.io/tls'
+      )
+   }
+   return {'tls.crt': cert, 'tls.key': key}
 }
 
 export async function run() {
