@@ -60,6 +60,22 @@ describe('buildSecret', () => {
       let secret = await buildSecret(testName, testNamespace, 'generic')
       expect(secret.metadata.name).toBe(testName)
    })
+   it('should build TLS secret with cert and key', async () => {
+      process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
+      process.env['INPUT_TLS-CERT'] = 'dummyBase64Cert'
+      process.env['INPUT_TLS-KEY'] = 'dummyBase64Key'
+      const secret = await buildSecret(
+         'tls-secret',
+         'tls-namespace',
+         'kubernetes.io/tls'
+      )
+      expect(secret.apiVersion).toBe('v1')
+      expect(secret.type).toBe('kubernetes.io/tls')
+      expect(secret.metadata.name).toBe('tls-secret')
+      expect(secret.metadata.namespace).toBe('tls-namespace')
+      expect(secret.data['tls.crt']).toBe('dummyBase64Cert')
+      expect(secret.data['tls.key']).toBe('dummyBase64Key')
+   })
 })
 
 describe('buildContainerRegistryDockerConfigJSON', () => {
@@ -103,7 +119,6 @@ describe('buildContainerRegistryDockerConfigJSON', () => {
             }
          }
       }
-
       const dockerConfigJson = buildContainerRegistryDockerConfigJSON(
          testContainerRegistryUrl,
          testContainerRegistryUserName,
