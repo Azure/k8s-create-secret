@@ -79,6 +79,7 @@ describe('buildSecret', () => {
    })
    it('should throw if TLS cert is missing', async () => {
       process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
+      delete process.env['INPUT_TLS-CERT']
       process.env['INPUT_TLS-KEY'] = 'ZHVtbXlLZXk='
 
       await expect(
@@ -91,6 +92,7 @@ describe('buildSecret', () => {
    it('should throw if TLS key is missing', async () => {
       process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
       process.env['INPUT_TLS-CERT'] = 'ZHVtbXlDZXJ0'
+      delete process.env['INPUT_TLS-KEY']
 
       await expect(
          buildSecret('test', 'ns', 'kubernetes.io/tls')
