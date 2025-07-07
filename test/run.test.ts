@@ -62,8 +62,9 @@ describe('buildSecret', () => {
    })
    it('should build TLS secret with cert and key', async () => {
       process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
-      process.env['INPUT_TLS-CERT'] = 'dummyBase64Cert'
-      process.env['INPUT_TLS-KEY'] = 'dummyBase64Key'
+      process.env['INPUT_TLS-CERT'] = 'ZHVtbXlDZXJ0' // valid base64 for 'dummyCert'
+      process.env['INPUT_TLS-KEY'] = 'ZHVtbXlLZXk=' // valid base64 for 'dummyKey'
+
       const secret = await buildSecret(
          'tls-secret',
          'tls-namespace',
@@ -73,8 +74,53 @@ describe('buildSecret', () => {
       expect(secret.type).toBe('kubernetes.io/tls')
       expect(secret.metadata.name).toBe('tls-secret')
       expect(secret.metadata.namespace).toBe('tls-namespace')
-      expect(secret.data['tls.crt']).toBe('dummyBase64Cert')
-      expect(secret.data['tls.key']).toBe('dummyBase64Key')
+      expect(secret.data['tls.crt']).toBe('ZHVtbXlDZXJ0')
+      expect(secret.data['tls.key']).toBe('ZHVtbXlLZXk=')
+   })
+   it('should throw if TLS cert is missing', async () => {
+      process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
+      process.env['INPUT_TLS-KEY'] = 'ZHVtbXlLZXk='
+
+      await expect(
+         buildSecret('test', 'ns', 'kubernetes.io/tls')
+      ).rejects.toThrow(
+         'Both tls-cert and tls-key must be provided for type kubernetes.io/tls'
+      )
+   })
+
+   it('should throw if TLS key is missing', async () => {
+      process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
+      process.env['INPUT_TLS-CERT'] = 'ZHVtbXlDZXJ0'
+
+      await expect(
+         buildSecret('test', 'ns', 'kubernetes.io/tls')
+      ).rejects.toThrow(
+         'Both tls-cert and tls-key must be provided for type kubernetes.io/tls'
+      )
+   })
+
+   it('should throw if TLS cert is not base64', async () => {
+      process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
+      process.env['INPUT_TLS-CERT'] = 'not base64!!'
+      process.env['INPUT_TLS-KEY'] = 'ZHVtbXlLZXk='
+
+      await expect(
+         buildSecret('test', 'ns', 'kubernetes.io/tls')
+      ).rejects.toThrow(
+         'Both tls-cert and tls-key must be valid base64-encoded strings'
+      )
+   })
+
+   it('should throw if TLS key is not base64', async () => {
+      process.env['INPUT_SECRET-TYPE'] = 'kubernetes.io/tls'
+      process.env['INPUT_TLS-CERT'] = 'ZHVtbXlDZXJ0'
+      process.env['INPUT_TLS-KEY'] = 'not_valid_base64'
+
+      await expect(
+         buildSecret('test', 'ns', 'kubernetes.io/tls')
+      ).rejects.toThrow(
+         'Both tls-cert and tls-key must be valid base64-encoded strings'
+      )
    })
 })
 
