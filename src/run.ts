@@ -117,7 +117,7 @@ export async function buildSecret(
          data: data
       }
    }
-   if (secretType === 'kubernetes.io/tls') {
+   if (secretType === TLS_K8S) {
       const tlsCert = core.getInput('tls-cert')
       const tlsKey = core.getInput('tls-key')
       const data = buildTlsSecretData(tlsCert, tlsKey)
