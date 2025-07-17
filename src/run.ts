@@ -117,6 +117,18 @@ export async function buildSecret(
          data: data
       }
    }
+   if (secretType === TLS_K8S) {
+      const tlsCert = core.getInput('tls-cert')
+      const tlsKey = core.getInput('tls-key')
+      const data = buildTlsSecretData(tlsCert, tlsKey)
+      return {
+         apiVersion: 'v1',
+         kind: 'Secret',
+         metadata: metaData,
+         type: secretType,
+         data: data
+      }
+   }
 
    // The serialized form of the secret data is a base64 encoded string
    let data: {[key: string]: string} = {}
@@ -146,7 +158,8 @@ export async function buildSecret(
 }
 const K8S_SECRET_TYPE_OPAQUE = 'Opaque' // Kubernetes secret type for generic secrets
 const SECRET_TYPE_GENERIC = 'generic'
-
+const TLS_SHORT = 'tls'
+const TLS_K8S = 'kubernetes.io/tls'
 function mapSecretType(inputType: string): string {
    const normalizedType = inputType.toLowerCase().trim()
    if (
@@ -155,7 +168,33 @@ function mapSecretType(inputType: string): string {
    ) {
       return K8S_SECRET_TYPE_OPAQUE
    }
+   if (normalizedType === TLS_SHORT || normalizedType === TLS_K8S) {
+      return TLS_K8S
+   }
    return inputType
+}
+function isBase64(str: string): boolean {
+   try {
+      return Buffer.from(str, 'base64').toString('base64') === str
+   } catch {
+      return false
+   }
+}
+
+function buildTlsSecretData(cert: string, key: string) {
+   if (!cert || !key) {
+      throw new Error(
+         'Both tls-cert and tls-key must be provided for type kubernetes.io/tls'
+      )
+   }
+
+   if (!isBase64(cert) || !isBase64(key)) {
+      throw new Error(
+         'Both tls-cert and tls-key must be valid base64-encoded strings'
+      )
+   }
+
+   return {'tls.crt': cert, 'tls.key': key}
 }
 
 export async function run() {
