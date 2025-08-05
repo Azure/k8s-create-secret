@@ -1,7 +1,7 @@
 import {kStringMaxLength} from 'buffer'
 import * as fs from 'fs'
 import * as path from 'path'
-
+import * as exec from '@actions/exec'
 import * as core from '@actions/core'
 
 const k8s = require('@kubernetes/client-node')
@@ -174,5 +174,59 @@ describe('buildContainerRegistryDockerConfigJSON', () => {
          testContainerRegistryEmail
       )
       expect(dockerConfigJson).toEqual(exptectedDockerConfigJsonNoEmail)
+   })
+})
+
+describe('runKubectlViaAz', () => {
+   const mockSecret = {
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: {name: 'test-secret', namespace: 'test-ns'},
+      type: 'Opaque',
+      data: {foo: 'YmFy'}
+   }
+
+   beforeEach(() => {
+      jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {})
+      jest.spyOn(fs, 'unlinkSync').mockImplementation(() => {})
+      jest.spyOn(exec, 'exec').mockResolvedValue(0)
+   })
+
+   afterEach(() => jest.restoreAllMocks())
+
+   it('calls az aks command invoke for delete and apply', async () => {
+      jest
+         .spyOn(core, 'getInput')
+         .mockImplementation((name: string) =>
+            name === 'cluster-resource-group'
+               ? 'rg'
+               : name === 'cluster-name'
+                 ? 'aks'
+                 : ''
+         )
+      const {runKubectlViaAz} = require('../src/run')
+      await runKubectlViaAz(mockSecret, 'test-ns', 'test-secret')
+      expect(exec.exec).toHaveBeenCalledWith(
+         'az',
+         expect.arrayContaining([
+            'aks',
+            'command',
+            'invoke',
+            '--resource-group',
+            'rg',
+            '--name',
+            'aks'
+         ])
+      )
+   })
+
+   it('throws if required inputs are missing', async () => {
+      jest.spyOn(core, 'getInput').mockReturnValue('')
+      const {runKubectlViaAz} = require('../src/run')
+      await expect(
+         runKubectlViaAz(mockSecret, 'test-ns', 'test-secret')
+      ).rejects.toThrow(
+         'cluster-resource-group and cluster-name are required for private cluster support'
+      )
    })
 })
