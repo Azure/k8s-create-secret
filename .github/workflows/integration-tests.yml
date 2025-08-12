@@ -14,13 +14,13 @@ jobs:
            run: sudo apt-get install -y conntrack
          - id: setup-minikube
            name: Setup Minikube
-           uses: medyagh/setup-minikube@1caee1f3cdc5d7556f42b132e828448fcfdc8d68
+           uses: medyagh/setup-minikube@7dbef3cf98b39ec41dad918f58b7aee0ac87c289
            with:
               minikube-version: 1.33.0
               kubernetes-version: 1.29.1
               driver: 'none'
            timeout-minutes: 3
-         - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+         - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
          - id: action-npm-build
            name: npm install and build
            run: |
@@ -64,7 +64,7 @@ jobs:
               kubernetes-version: 1.29.1
               driver: 'none'
            timeout-minutes: 3
-         - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+         - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
          - id: action-npm-build
            name: npm install and build
            run: |
