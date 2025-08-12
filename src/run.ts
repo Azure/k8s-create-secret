@@ -99,7 +99,14 @@ export async function runKubectlViaAz(
          tempFile
       ])
    } finally {
-      fs.unlinkSync(tempFile)
+      // Remove temp file if it exists
+      if (fs.existsSync(tempFile)) {
+         fs.unlinkSync(tempFile)
+      }
+      // Remove temp directory and its contents
+      if (fs.existsSync(tempDir)) {
+         fs.rmSync(tempDir, { recursive: true, force: true })
+      }
    }
 }
 export async function buildSecret(
