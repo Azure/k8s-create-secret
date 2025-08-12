@@ -69,7 +69,10 @@ export async function runKubectlViaAz(
    }
    // Write secret to temp file
    const tempFile = path.join(os.tmpdir(), `secret-${secretName}.json`)
-   fs.writeFileSync(tempFile, JSON.stringify(secret, null, 2))
+   // Write secret to temp file securely
+   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'secret-'));
+   const tempFile = path.join(tempDir, `${secretName}.json`);
+   fs.writeFileSync(tempFile, JSON.stringify(secret, null, 2));
    try {
       await exec.exec('az', [
          'aks',
