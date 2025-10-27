@@ -22,14 +22,14 @@
       "@actions/core": "^1.11.1",
       "@actions/exec": "^1.0.0",
       "@actions/tool-cache": "^2.0.2",
-      "@babel/core": "^7.28.4",
-      "@babel/preset-env": "^7.28.3",
+      "@babel/core": "^7.28.5",
+      "@babel/preset-env": "^7.28.5",
       "@kubernetes/client-node": "^1.4.0",
       "husky": "^9.1.7"
    },
    "devDependencies": {
       "@types/jest": "^30.0.0",
-      "@types/node": "^24.9.0",
+      "@types/node": "^24.9.1",
       "@vercel/ncc": "^0.38.4",
       "jest": "^30.2.0",
       "prettier": "^3.6.2",
