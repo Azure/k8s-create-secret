@@ -19,8 +19,8 @@
    "author": "GitHub",
    "license": "MIT",
    "dependencies": {
-      "@actions/core": "^1.11.1",
-      "@actions/exec": "^1.0.0",
+      "@actions/core": "^2.0.1",
+      "@actions/exec": "^2.0.0",
       "@actions/tool-cache": "^2.0.2",
       "@babel/core": "^7.28.5",
       "@babel/preset-env": "^7.28.5",
@@ -29,7 +29,7 @@
    },
    "devDependencies": {
       "@types/jest": "^30.0.0",
-      "@types/node": "^24.10.1",
+      "@types/node": "^25.0.2",
       "@vercel/ncc": "^0.38.4",
       "jest": "^30.2.0",
       "prettier": "^3.7.4",
