@@ -8,27 +8,12 @@ jobs:
       runs-on: ubuntu-22.04
       env:
          KUBECONFIG: /home/runner/.kube/config
-         PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
       steps:
-         - name: Install conntrack
-           run: sudo apt-get install -y conntrack
-         - id: setup-minikube
-           name: Setup Minikube
-           uses: medyagh/setup-minikube@e9e035a86bbc3caea26a450bd4dbf9d0c453682e
+         - name: Setup Test Environment
+           uses: ./.github/actions/setup-test-environment
            with:
-              minikube-version: 1.33.0
-              kubernetes-version: 1.29.1
-              driver: 'none'
-           timeout-minutes: 3
-         - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-         - id: action-npm-build
-           name: npm install and build
-           run: |
-              echo $PR_BASE_REF
-              if [[ $PR_BASE_REF != releases/* ]]; then
-                npm install
-                npm run build
-              fi
+              pr-base-ref: ${{ github.event.pull_request.base.ref }}
+           timeout-minutes: 5
          - id: call-create-secret
            name: execute k8s-create-secret
            uses: ./
@@ -52,27 +37,12 @@ jobs:
       runs-on: ubuntu-latest
       env:
          KUBECONFIG: /home/runner/.kube/config
-         PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
       steps:
-         - name: Install conntrack
-           run: sudo apt-get install -y conntrack
-         - id: setup-minikube
-           name: Setup Minikube
-           uses: medyagh/setup-minikube@latest
+         - name: Setup Test Environment
+           uses: ./.github/actions/setup-test-environment
            with:
-              minikube-version: 1.33.0
-              kubernetes-version: 1.29.1
-              driver: 'none'
-           timeout-minutes: 3
-         - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-         - id: action-npm-build
-           name: npm install and build
-           run: |
-              echo $PR_BASE_REF
-              if [[ $PR_BASE_REF != releases/* ]]; then
-                npm install
-                npm run build
-              fi
+              pr-base-ref: ${{ github.event.pull_request.base.ref }}
+           timeout-minutes: 5
          - id: create-secret-action
            name: create test secret with k8s-create-secret
            uses: ./
