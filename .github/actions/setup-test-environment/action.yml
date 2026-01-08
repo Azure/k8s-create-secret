@@ -1,5 +1,5 @@
 name: 'Setup Test Environment'
-description: 'Setup Minikube, checkout code, and build the project'
+description: 'Setup Minikube and build the project'
 inputs:
    minikube-version:
       description: 'Minikube version to install'
@@ -26,9 +26,6 @@ runs:
            minikube-version: ${{ inputs.minikube-version }}
            kubernetes-version: ${{ inputs.kubernetes-version }}
            driver: ${{ inputs.driver }}
-
-      - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: npm install and build
         shell: bash
