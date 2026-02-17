@@ -19,20 +19,20 @@
    "author": "GitHub",
    "license": "MIT",
    "dependencies": {
-      "@actions/core": "^2.0.2",
-      "@actions/exec": "^2.0.0",
-      "@actions/tool-cache": "^3.0.0",
-      "@babel/core": "^7.28.6",
-      "@babel/preset-env": "^7.28.6",
+      "@actions/core": "^3.0.0",
+      "@actions/exec": "^3.0.0",
+      "@actions/tool-cache": "^4.0.0",
+      "@babel/core": "^7.29.0",
+      "@babel/preset-env": "^7.29.0",
       "@kubernetes/client-node": "^1.4.0",
       "husky": "^9.1.7"
    },
    "devDependencies": {
       "@types/jest": "^30.0.0",
-      "@types/node": "^25.0.9",
+      "@types/node": "^25.2.3",
       "@vercel/ncc": "^0.38.4",
       "jest": "^30.2.0",
-      "prettier": "^3.8.0",
+      "prettier": "^3.8.1",
       "ts-jest": "^29.4.6",
       "typescript": "^5.9.3"
    }
