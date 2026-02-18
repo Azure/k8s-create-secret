@@ -1,4 +1,8 @@
 import * as core from '@actions/core'
+import * as exec from '@actions/exec'
+import * as fs from 'fs'
+import * as os from 'os'
+import * as path from 'path'
 import {
    CoreV1ApiCreateNamespacedSecretRequest,
    CoreV1ApiDeleteNamespacedSecretRequest,
@@ -51,7 +55,60 @@ export function buildContainerRegistryDockerConfigJSON(
    }
    return dockerConfigJson //Buffer.from(JSON.stringify(dockerConfigJson)).toString('base64');
 }
-
+export async function runKubectlViaAz(
+   secret: V1Secret,
+   namespace: string,
+   secretName: string
+) {
+   const resourceGroup = core.getInput('cluster-resource-group')
+   const clusterName = core.getInput('cluster-name')
+   if (!resourceGroup || !clusterName) {
+      throw new Error(
+         'cluster-resource-group and cluster-name are required for private cluster support'
+      )
+   }
+   // Write secret to temp file
+   const tempFile = path.join(os.tmpdir(), `secret-${secretName}.json`)
+   // Write secret to temp file securely
+   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'secret-'));
+   const tempFile = path.join(tempDir, `${secretName}.json`);
+   fs.writeFileSync(tempFile, JSON.stringify(secret, null, 2), { mode: 0o600 });
+   try {
+      await exec.exec('az', [
+         'aks',
+         'command',
+         'invoke',
+         '--resource-group',
+         resourceGroup,
+         '--name',
+         clusterName,
+         '--command',
+         `kubectl delete secret ${secretName} -n ${namespace} --ignore-not-found`
+      ])
+      await exec.exec('az', [
+         'aks',
+         'command',
+         'invoke',
+         '--resource-group',
+         resourceGroup,
+         '--name',
+         clusterName,
+         '--command',
+         `kubectl apply -f - -n ${namespace}`,
+         '--file',
+         tempFile
+      ])
+   } finally {
+      // Remove temp file if it exists
+      if (fs.existsSync(tempFile)) {
+         fs.unlinkSync(tempFile)
+      }
+      // Remove temp directory and its contents
+      if (fs.existsSync(tempDir)) {
+         fs.rmSync(tempDir, { recursive: true, force: true })
+      }
+   }
+}
 export async function buildSecret(
    secretName: string,
    namespace: string,
@@ -218,6 +275,13 @@ export async function run() {
 
    // The namespace in which to place the secret
    const namespace: string = core.getInput('namespace') || 'default'
+
+   const sec = await buildSecret(secretName, namespace, secretType)
+
+   if (core.getInput('use-invoke-command') === 'true') {
+      await runKubectlViaAz(sec, namespace, secretName)
+      return
+   }
 
    // Delete if exists
    let deleteSecretResponse
