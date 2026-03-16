@@ -36,6 +36,16 @@ inputs:
    tls-key:
       description: 'Base64 encoded TLS private key (PEM format)'
       required: false
+   use-invoke-command:
+      description: 'Set to true to use az aks command invoke for private clusters (recommended for GitHub-hosted runners with private AKS)'
+      required: false
+      default: 'false'
+   cluster-resource-group:
+      description: 'AKS cluster resource group (required when use-invoke-command is true)'
+      required: false
+   cluster-name:
+      description: 'AKS cluster name (required when use-invoke-command is true)'
+      required: false
 outputs:
    secret-name:
       description: 'Secret name'
