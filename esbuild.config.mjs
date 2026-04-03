@@ -5,8 +5,11 @@ await build({
    bundle: true,
    platform: 'node',
    target: 'node24',
-   outdir: 'lib',
+   outfile: 'lib/index.js',
    format: 'esm',
+   banner: {
+      js: "import { createRequire } from 'module';const require = createRequire(import.meta.url);"
+   },
    sourcemap: false,
    minify: false
 })
