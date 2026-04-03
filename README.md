@@ -85,7 +85,7 @@ Example output:
 
 # Testing
 
-Unit tests are run with [jest](https://jestjs.io/) with [ts-jest](https://www.npmjs.com/package/ts-jest) and can be found in the `./test` directory
+Unit tests are run with [Vitest](https://vitest.dev/) and can be found in the `./test` directory
 
 Integration tests use [Minikube](https://minikube.sigs.k8s.io/docs/) and are executed within workflows in `./github/workflows`
 

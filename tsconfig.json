@@ -1,7 +1,12 @@
 {
    "compilerOptions": {
-      "target": "ES6",
-      "module": "commonjs"
+      "target": "ES2022",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "strict": false,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "types": ["node", "vitest/globals"]
    },
-   "exclude": ["node_modules", "test"]
+   "exclude": ["node_modules"]
 }
