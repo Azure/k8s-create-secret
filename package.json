@@ -5,7 +5,8 @@
    "type": "module",
    "main": "lib/index.js",
    "scripts": {
-      "build": "node esbuild.config.mjs",
+      "build": "tsc --noEmit && node esbuild.config.mjs",
+      "check": "tsc --noEmit",
       "test": "vitest run",
       "format": "prettier --write .",
       "format-check": "prettier --check .",
