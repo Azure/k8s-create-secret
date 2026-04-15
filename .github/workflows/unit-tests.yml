@@ -16,6 +16,10 @@ jobs:
            id: npm-install
            run: |
               npm install
+         - name: Run npm build
+           id: npm-build
+           run: |
+              npm run build
          - name: Run npm test
            id: npm-test
            run: |

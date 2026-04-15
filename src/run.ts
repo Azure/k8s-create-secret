@@ -31,7 +31,7 @@ export function buildContainerRegistryDockerConfigJSON(
    registryUrl: string,
    registryUserName: string,
    registryPassword: string,
-   registryEmail
+   registryEmail: string
 ): DockerConfigJSON {
    const authString = Buffer.from(
       `${registryUserName}:${registryPassword}`
@@ -227,14 +227,14 @@ export async function run() {
          namespace: namespace
       }
       deleteSecretResponse = await api.deleteNamespacedSecret(deleteRequest)
-   } catch ({response}) {
+   } catch (err: any) {
       core.warning(
-         `Failed to delete secret with statusCode: ${response?.statusCode}`
+         `Failed to delete secret with statusCode: ${err.response?.statusCode}`
       )
-      core.warning(response?.body?.metadata)
+      core.warning(err.response?.body?.metadata)
    }
    core.info('Deleting secret:')
-   core.info(JSON.stringify(deleteSecretResponse?.response?.body, undefined, 2))
+   core.info(JSON.stringify(deleteSecretResponse, undefined, 2))
 
    const secret = await buildSecret(secretName, namespace, secretType)
    core.info('Creating secret')
@@ -246,6 +246,6 @@ export async function run() {
       await api.createNamespacedSecret(secretRequest)
    } catch (err) {
       core.info(JSON.stringify(err))
-      core.setFailed(err.message)
+      core.setFailed(err instanceof Error ? err.message : String(err))
    }
 }
