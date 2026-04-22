@@ -23,12 +23,12 @@
       "@actions/core": "^3.0.0",
       "@actions/exec": "^3.0.0",
       "@actions/tool-cache": "^4.0.0",
-      "@kubernetes/client-node": "^1.4.0",
-      "husky": "^9.1.7"
+      "@kubernetes/client-node": "^1.4.0"
    },
    "devDependencies": {
       "@types/node": "^25.5.2",
       "esbuild": "^0.28.0",
+      "husky": "^9.1.7",
       "prettier": "^3.8.1",
       "typescript": "^6.0.3",
       "vitest": "^4.1.2"
