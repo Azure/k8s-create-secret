@@ -234,7 +234,7 @@ export async function run() {
       core.warning(err.response?.body?.metadata)
    }
    core.info('Deleting secret:')
-   core.info(JSON.stringify(deleteSecretResponse, undefined, 2))
+   core.debug('Delete secret response received')
 
    const secret = await buildSecret(secretName, namespace, secretType)
    core.info('Creating secret')
@@ -245,7 +245,6 @@ export async function run() {
       }
       await api.createNamespacedSecret(secretRequest)
    } catch (err) {
-      core.info(JSON.stringify(err))
       core.setFailed(err instanceof Error ? err.message : String(err))
    }
 }
