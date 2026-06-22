@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.0.1] - 2026-06-22
+
+### Changed
+
+- [#243](https://github.com/Azure/k8s-create-secret/pull/243) Move husky to devDependencies, add version sync pre-commit hook
+- [#254](https://github.com/Azure/k8s-create-secret/pull/254) Remove deprecated OliverMKing release workflow, pin actions to SHA
+- Bump npm dependencies: `ip-address`, `@types/node`, `ws`, `vitest`, `esbuild`, `js-yaml`, `form-data`, `undici`, `typescript` (#241, #244, #246, #247, #250, #251, #252, #255, #258, #260, #261, #262, #263, #264, #265)
+- Bump GitHub Actions: `github/codeql-action` and other grouped action updates in `.github/workflows` (#242, #245, #248, #249, #253, #256, #259)
+
+### Fixed
+
+- [#257](https://github.com/Azure/k8s-create-secret/pull/257) Stop logging full API responses and error objects to workflow logs
+
 ## [6.0.0] - 2026-04-20
 
 ### Added
