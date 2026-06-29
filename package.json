@@ -26,10 +26,10 @@
       "@kubernetes/client-node": "^1.4.0"
    },
    "devDependencies": {
-      "@types/node": "^26.0.0",
+      "@types/node": "^26.0.1",
       "esbuild": "^0.28.1",
       "husky": "^9.1.7",
-      "prettier": "^3.8.4",
+      "prettier": "^3.9.3",
       "typescript": "^6.0.3",
       "vitest": "^4.1.9"
    }
