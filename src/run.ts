@@ -220,21 +220,26 @@ export async function run() {
    const namespace: string = core.getInput('namespace') || 'default'
 
    // Delete if exists
-   let deleteSecretResponse
    try {
-      let deleteRequest: CoreV1ApiDeleteNamespacedSecretRequest = {
+      const deleteRequest: CoreV1ApiDeleteNamespacedSecretRequest = {
          name: secretName,
          namespace: namespace
       }
-      deleteSecretResponse = await api.deleteNamespacedSecret(deleteRequest)
+      await api.deleteNamespacedSecret(deleteRequest)
    } catch (err: any) {
-      core.warning(
-         `Failed to delete secret with statusCode: ${err.response?.statusCode}`
-      )
-      core.warning(err.response?.body?.metadata)
+      if (err.response?.statusCode === 404) {
+         core.debug(`Secret ${secretName} does not exist, creating new secret`)
+      } else {
+         const statusCode = err.response?.statusCode
+         const detail =
+            err.response?.body?.message ?? err.message ?? String(err)
+         core.warning(
+            statusCode !== undefined
+               ? `Failed to delete secret with statusCode ${statusCode}: ${detail}`
+               : `Failed to delete secret: ${detail}`
+         )
+      }
    }
-   core.info('Deleting secret:')
-   core.debug('Delete secret response received')
 
    const secret = await buildSecret(secretName, namespace, secretType)
    core.info('Creating secret')
