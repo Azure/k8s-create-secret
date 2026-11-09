@@ -3,6 +3,7 @@ import {
    CoreV1ApiCreateNamespacedSecretRequest,
    CoreV1ApiDeleteNamespacedSecretRequest,
    CoreV1Api,
+   ApiException,
    KubeConfig,
    V1ObjectMeta,
    V1Secret
@@ -197,6 +198,34 @@ function buildTlsSecretData(cert: string, key: string) {
    return {'tls.crt': cert, 'tls.key': key}
 }
 
+function getApiErrorDetails(error: unknown): {
+   statusCode?: number
+   detail: string
+} {
+   if (!(error instanceof ApiException)) {
+      return {detail: error instanceof Error ? error.message : String(error)}
+   }
+
+   // ApiException.message includes the full response and headers.
+   let body: unknown = error.body
+   if (typeof body === 'string') {
+      try {
+         body = JSON.parse(body)
+      } catch {
+         body = undefined
+      }
+   }
+
+   const detail =
+      body !== null &&
+      typeof body === 'object' &&
+      'message' in body &&
+      typeof body.message === 'string'
+         ? body.message
+         : 'Kubernetes API request failed'
+   return {statusCode: error.code, detail}
+}
+
 export async function run() {
    checkClusterContext()
 
@@ -226,13 +255,11 @@ export async function run() {
          namespace: namespace
       }
       await api.deleteNamespacedSecret(deleteRequest)
-   } catch (err: any) {
-      if (err.response?.statusCode === 404) {
+   } catch (err) {
+      const {statusCode, detail} = getApiErrorDetails(err)
+      if (statusCode === 404) {
          core.debug(`Secret ${secretName} does not exist, creating new secret`)
       } else {
-         const statusCode = err.response?.statusCode
-         const detail =
-            err.response?.body?.message ?? err.message ?? String(err)
          core.warning(
             statusCode !== undefined
                ? `Failed to delete secret with statusCode ${statusCode}: ${detail}`
@@ -250,6 +277,11 @@ export async function run() {
       }
       await api.createNamespacedSecret(secretRequest)
    } catch (err) {
-      core.setFailed(err instanceof Error ? err.message : String(err))
+      const {statusCode, detail} = getApiErrorDetails(err)
+      core.setFailed(
+         statusCode !== undefined
+            ? `Failed to create secret with statusCode ${statusCode}: ${detail}`
+            : detail
+      )
    }
 }
