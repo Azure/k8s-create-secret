@@ -1,8 +1,10 @@
 import * as core from '@actions/core'
+import {STATUS_CODES} from 'node:http'
 import {
    CoreV1ApiCreateNamespacedSecretRequest,
    CoreV1ApiDeleteNamespacedSecretRequest,
    CoreV1Api,
+   ApiException,
    KubeConfig,
    V1ObjectMeta,
    V1Secret
@@ -134,14 +136,14 @@ export async function buildSecret(
    let data: {[key: string]: string} = {}
    if (core.getInput('data')) {
       core.debug(`loading 'data' field`)
-      data = JSON.parse(core.getInput('data'))
+      data = parseSecretInput('data')
    }
 
    // The plaintext form of the secret data
    let stringData: {[key: string]: string} = {}
    if (core.getInput('string-data')) {
       core.debug(`loading 'string-data' field`)
-      stringData = JSON.parse(core.getInput('string-data'))
+      stringData = parseSecretInput('string-data')
    }
 
    // Create secret object for passing to the api
@@ -156,6 +158,18 @@ export async function buildSecret(
 
    return secret
 }
+
+function parseSecretInput(name: 'data' | 'string-data'): {
+   [key: string]: string
+} {
+   try {
+      return JSON.parse(core.getInput(name))
+   } catch {
+      // JSON parser errors can include excerpts of the secret input.
+      throw new Error(`${name} must be valid JSON`)
+   }
+}
+
 const K8S_SECRET_TYPE_OPAQUE = 'Opaque' // Kubernetes secret type for generic secrets
 const SECRET_TYPE_GENERIC = 'generic'
 const TLS_SHORT = 'tls'
@@ -197,6 +211,23 @@ function buildTlsSecretData(cert: string, key: string) {
    return {'tls.crt': cert, 'tls.key': key}
 }
 
+function getApiErrorDetails(error: unknown): {
+   statusCode?: number
+   detail: string
+} {
+   if (!(error instanceof ApiException)) {
+      // Client/parser errors can also contain response or credential data.
+      return {detail: 'Kubernetes API request failed'}
+   }
+
+   // Neither the exception message nor the API body's message is safe to log.
+   // Use only locally defined HTTP descriptions, never server-provided text.
+   return {
+      statusCode: error.code,
+      detail: STATUS_CODES[error.code] ?? 'Kubernetes API request failed'
+   }
+}
+
 export async function run() {
    checkClusterContext()
 
@@ -226,13 +257,11 @@ export async function run() {
          namespace: namespace
       }
       await api.deleteNamespacedSecret(deleteRequest)
-   } catch (err: any) {
-      if (err.response?.statusCode === 404) {
+   } catch (err) {
+      const {statusCode, detail} = getApiErrorDetails(err)
+      if (statusCode === 404) {
          core.debug(`Secret ${secretName} does not exist, creating new secret`)
       } else {
-         const statusCode = err.response?.statusCode
-         const detail =
-            err.response?.body?.message ?? err.message ?? String(err)
          core.warning(
             statusCode !== undefined
                ? `Failed to delete secret with statusCode ${statusCode}: ${detail}`
@@ -250,6 +279,11 @@ export async function run() {
       }
       await api.createNamespacedSecret(secretRequest)
    } catch (err) {
-      core.setFailed(err instanceof Error ? err.message : String(err))
+      const {statusCode, detail} = getApiErrorDetails(err)
+      core.setFailed(
+         statusCode !== undefined
+            ? `Failed to create secret with statusCode ${statusCode}: ${detail}`
+            : `Failed to create secret: ${detail}`
+      )
    }
 }

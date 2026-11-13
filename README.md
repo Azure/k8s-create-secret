@@ -87,7 +87,20 @@ Example output:
 
 Unit tests are run with [Vitest](https://vitest.dev/) and can be found in the `./test` directory
 
-Integration tests use [Minikube](https://minikube.sigs.k8s.io/docs/) and are executed within workflows in `./github/workflows`
+HTTP integration tests in `test/http-integration.test.mjs` run the built action
+against a local mock server using the real Kubernetes client. They check request
+behavior, exit codes, and that sensitive values never appear in action output.
+Run the local checks with Node 24:
+
+```sh
+npm ci
+npm run build
+npm test
+npm run test:http
+npm run format-check
+```
+
+Cluster integration tests use [Minikube](https://minikube.sigs.k8s.io/docs/) and are executed within workflows in `.github/workflows`.
 
 # Dependencies
 
