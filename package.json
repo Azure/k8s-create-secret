@@ -8,6 +8,7 @@
       "build": "tsc --noEmit && node esbuild.config.mjs",
       "check": "tsc --noEmit",
       "test": "vitest run",
+      "test:http": "node --test test/http-integration.test.mjs",
       "format": "prettier --write .",
       "format-check": "prettier --check .",
       "prepare": "husky"

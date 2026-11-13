@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import {STATUS_CODES} from 'node:http'
 import {
    CoreV1ApiCreateNamespacedSecretRequest,
    CoreV1ApiDeleteNamespacedSecretRequest,
@@ -135,14 +136,14 @@ export async function buildSecret(
    let data: {[key: string]: string} = {}
    if (core.getInput('data')) {
       core.debug(`loading 'data' field`)
-      data = JSON.parse(core.getInput('data'))
+      data = parseSecretInput('data')
    }
 
    // The plaintext form of the secret data
    let stringData: {[key: string]: string} = {}
    if (core.getInput('string-data')) {
       core.debug(`loading 'string-data' field`)
-      stringData = JSON.parse(core.getInput('string-data'))
+      stringData = parseSecretInput('string-data')
    }
 
    // Create secret object for passing to the api
@@ -157,6 +158,18 @@ export async function buildSecret(
 
    return secret
 }
+
+function parseSecretInput(name: 'data' | 'string-data'): {
+   [key: string]: string
+} {
+   try {
+      return JSON.parse(core.getInput(name))
+   } catch {
+      // JSON parser errors can include excerpts of the secret input.
+      throw new Error(`${name} must be valid JSON`)
+   }
+}
+
 const K8S_SECRET_TYPE_OPAQUE = 'Opaque' // Kubernetes secret type for generic secrets
 const SECRET_TYPE_GENERIC = 'generic'
 const TLS_SHORT = 'tls'
@@ -203,27 +216,16 @@ function getApiErrorDetails(error: unknown): {
    detail: string
 } {
    if (!(error instanceof ApiException)) {
-      return {detail: error instanceof Error ? error.message : String(error)}
+      // Client/parser errors can also contain response or credential data.
+      return {detail: 'Kubernetes API request failed'}
    }
 
-   // ApiException.message includes the full response and headers.
-   let body: unknown = error.body
-   if (typeof body === 'string') {
-      try {
-         body = JSON.parse(body)
-      } catch {
-         body = undefined
-      }
+   // Neither the exception message nor the API body's message is safe to log.
+   // Use only locally defined HTTP descriptions, never server-provided text.
+   return {
+      statusCode: error.code,
+      detail: STATUS_CODES[error.code] ?? 'Kubernetes API request failed'
    }
-
-   const detail =
-      body !== null &&
-      typeof body === 'object' &&
-      'message' in body &&
-      typeof body.message === 'string'
-         ? body.message
-         : 'Kubernetes API request failed'
-   return {statusCode: error.code, detail}
 }
 
 export async function run() {
@@ -281,7 +283,7 @@ export async function run() {
       core.setFailed(
          statusCode !== undefined
             ? `Failed to create secret with statusCode ${statusCode}: ${detail}`
-            : detail
+            : `Failed to create secret: ${detail}`
       )
    }
 }
