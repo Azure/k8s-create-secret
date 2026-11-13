@@ -76,7 +76,7 @@ describe('run API errors', () => {
       ['JSON text', JSON.stringify({message: 'Deletion forbidden'})],
       ['an object', {message: 'Deletion forbidden'}]
    ])(
-      'reports only the API message when the body is %s',
+      'uses a local status description when the body is %s',
       async (_name, body) => {
          vi.mocked(
             CoreV1Api.prototype.deleteNamespacedSecret
@@ -89,7 +89,7 @@ describe('run API errors', () => {
          await run()
 
          expect(core.warning).toHaveBeenCalledExactlyOnceWith(
-            'Failed to delete secret with statusCode 403: Deletion forbidden'
+            'Failed to delete secret with statusCode 403: Forbidden'
          )
          expect(CoreV1Api.prototype.createNamespacedSecret).toHaveBeenCalled()
       }
@@ -111,31 +111,35 @@ describe('run API errors', () => {
       await run()
 
       expect(core.warning).toHaveBeenCalledExactlyOnceWith(
-         'Failed to delete secret with statusCode 500: Kubernetes API request failed'
+         'Failed to delete secret with statusCode 500: Internal Server Error'
       )
    })
 
-   it('preserves network error messages without a status code', async () => {
+   it.each([
+      new Error('Connection refused: private connection details'),
+      new SyntaxError('Unexpected token: private response body'),
+      'private non-Error failure'
+   ])('does not disclose non-API deletion errors (%#)', async (error) => {
       vi.mocked(CoreV1Api.prototype.deleteNamespacedSecret).mockRejectedValue(
-         new Error('Connection refused')
+         error
       )
 
       await run()
 
       expect(core.warning).toHaveBeenCalledExactlyOnceWith(
-         'Failed to delete secret: Connection refused'
+         'Failed to delete secret: Kubernetes API request failed'
       )
    })
 
-   it('preserves non-Error failures', async () => {
+   it('uses a fixed fallback for unknown status codes', async () => {
       vi.mocked(CoreV1Api.prototype.deleteNamespacedSecret).mockRejectedValue(
-         'Connection closed'
+         new ApiException(599, 'private message', {message: 'private body'}, {})
       )
 
       await run()
 
       expect(core.warning).toHaveBeenCalledExactlyOnceWith(
-         'Failed to delete secret: Connection closed'
+         'Failed to delete secret with statusCode 599: Kubernetes API request failed'
       )
    })
 
@@ -152,19 +156,23 @@ describe('run API errors', () => {
       await run()
 
       expect(core.setFailed).toHaveBeenCalledExactlyOnceWith(
-         'Failed to create secret with statusCode 403: Creation forbidden'
+         'Failed to create secret with statusCode 403: Forbidden'
       )
    })
 
-   it('preserves ordinary creation error messages', async () => {
+   it.each([
+      new Error('Connection refused: private connection details'),
+      new SyntaxError('Unexpected token: private response body'),
+      'private non-Error failure'
+   ])('does not disclose non-API creation errors (%#)', async (error) => {
       vi.mocked(CoreV1Api.prototype.createNamespacedSecret).mockRejectedValue(
-         new Error('Connection refused')
+         error
       )
 
       await run()
 
       expect(core.setFailed).toHaveBeenCalledExactlyOnceWith(
-         'Connection refused'
+         'Failed to create secret: Kubernetes API request failed'
       )
    })
 })
