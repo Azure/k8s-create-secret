@@ -106,6 +106,43 @@ describe('buildSecret', () => {
    })
 })
 
+describe('secret JSON inputs', () => {
+   beforeEach(() => {
+      vi.stubEnv('INPUT_DATA', '')
+      vi.stubEnv('INPUT_STRING-DATA', '')
+   })
+
+   afterEach(() => {
+      vi.unstubAllEnvs()
+   })
+
+   it.each(['data', 'string-data'])(
+      'reports invalid %s without including the input',
+      async (name) => {
+         vi.stubEnv(
+            `INPUT_${name.toUpperCase()}`,
+            'PRIVATE_SECRET invalid JSON'
+         )
+
+         await expect(buildSecret('test', 'ns', 'generic')).rejects.toThrow(
+            new Error(`${name} must be valid JSON`)
+         )
+      }
+   )
+
+   it.each([
+      ['data', 'data'],
+      ['string-data', 'stringData']
+   ])('preserves valid %s', async (name, field) => {
+      const values = {password: 'c2VjcmV0'}
+      vi.stubEnv(`INPUT_${name.toUpperCase()}`, JSON.stringify(values))
+
+      const secret = await buildSecret('test', 'ns', 'generic')
+
+      expect(secret[field]).toEqual(values)
+   })
+})
+
 describe('buildContainerRegistryDockerConfigJSON', () => {
    it('should build docker config json', async () => {
       const testContainerRegistryUrl = 'test-container-registry-url'

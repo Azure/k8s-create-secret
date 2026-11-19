@@ -24,3 +24,5 @@ jobs:
            id: npm-test
            run: |
               npm test
+         - name: Run HTTP integration tests
+           run: npm run test:http
