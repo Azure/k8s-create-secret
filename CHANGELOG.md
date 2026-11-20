@@ -1,5 +1,24 @@
 # Changelog
 
+## [6.0.2] - 2026-11-19
+
+### Added
+
+- [#306](https://github.com/Azure/k8s-create-secret/pull/306) Add 20 HTTP integration cases covering secret requests, API failures, malformed inputs and responses, and sensitive-value disclosure; run the suite in CI
+
+### Changed
+
+- [#282](https://github.com/Azure/k8s-create-secret/pull/282) Enforce a seven-day dependency freshness period and check signed commits
+- Bump npm dependencies: `@kubernetes/client-node`, `@types/node`, `esbuild`, `prettier`, `typescript`, `vitest`, `ip-address`, `js-yaml`, `postcss`, `source-map-js`, `undici`, `vite` (#267, #273, #278, #279, #280, #281, #286, #288, #290, #291, #293, #295, #297, #300, #302, #303, #304, #308)
+- Bump GitHub Actions: `actions/checkout`, `actions/setup-node`, `actions/stale`, `github/codeql-action`, `Azure/action-release-workflows`, and other grouped action updates (#266, #274, #275, #284, #285, #296, #299, #307)
+
+### Fixed
+
+- [#272](https://github.com/Azure/k8s-create-secret/pull/272) Quiet expected delete-404 responses while reporting other deletion failures
+- [#305](https://github.com/Azure/k8s-create-secret/pull/305) Handle Kubernetes API errors without logging full responses
+- [#306](https://github.com/Azure/k8s-create-secret/pull/306) Prevent secret disclosure in error logs by using HTTP status codes and fixed diagnostics instead of server-provided messages or arbitrary exception text
+- [#301](https://github.com/Azure/k8s-create-secret/pull/301) Enable stale issue and PR cleanup after 74 inactive days
+
 ## [6.0.1] - 2026-06-22
 
 ### Changed
